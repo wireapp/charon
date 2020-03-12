@@ -10,5 +10,5 @@ def generate_timestamp() -> int:
 
 
 def get_configuration() -> Config:
-    config = app.config['CHARON_CONFIG']
-    return Config(roman_url=config['ROMAN_URL'], signing_secret=config['SIGN_SECRET'], bot_url=config['BOT_URL'])
+    return Config(roman_url=app.config['ROMAN_URL'], signing_secret=app.config['SIGN_SECRET'],
+                  bot_url=app.config['BOT_URL'])

@@ -1,7 +1,6 @@
-import json
 from threading import Thread
 
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 from roman.TypeHandler import handle
 
@@ -13,4 +12,4 @@ def messages_api():
     # TODO verify that this is the way
 
     Thread(target=handle, args=request.get_json()).start()
-    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+    return jsonify({'success': True})
