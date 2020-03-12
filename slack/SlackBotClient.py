@@ -24,6 +24,6 @@ class SlackBotClient:
         signature = SigningService(self.signing_secret).generate_signature(timestamp, bytes_payload)
         return {
             'Content-Type': 'application/json',
-            'X-Slack-Request-Timestamp': timestamp,
+            'X-Slack-Request-Timestamp': str(timestamp),
             'X-Slack-Signature': signature
         }

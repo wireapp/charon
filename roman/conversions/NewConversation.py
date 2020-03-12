@@ -41,10 +41,8 @@ class NewConversationConverter:
         self.config = config
 
     def new_conversation_created(self, roman_payload: dict) -> dict:
-        user = roman_payload['userId']
-
         conversation = self.__get_conversation_info(roman_payload['token'])
-
+        user = conversation['creator']
         timestamp = generate_timestamp()
         bot_id = roman_payload['botId']
         return {
