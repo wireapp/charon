@@ -1,7 +1,7 @@
 from flask import Flask
 
-from roman.api.RomanAPI import roman_api
-from slack.api.SlackAPI import slack_api
+from roman.RomanAPI import roman_api
+from slack.SlackAPI import slack_api
 
 app = Flask(__name__)
 
