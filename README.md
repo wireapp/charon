@@ -15,7 +15,20 @@ Please create file `config.py` which contains following runtime variables:
 ROMAN_URL = '<Roman URL>'
 ```
 
-## Workflow
+## How does Charon work
+It exposes Slack-like API which is called by the Slack Bot.
+Then it transforms the API call to one that can be processed by [Roman](https://github.com/dkovacevic/roman).
+The very same thing happens when new message is received from the Roman,
+the message is transformed (some information are missing in the default calls from the Roman, so the proxy ask for them)
+ to the Slack version of message and sent to the Slack Bot API.
+ 
+ > Is it slow?
+ 
+ Not really, it is slower than running native [Lithium](https://github.com/wireapp/lithium),
+ but when I was testing raw Slack Bot with Slack API, the response time was between 1.4 and 2.5 seconds.
+ The setup with Charon and Roman had response times around 1.2 and 2.5 seconds, so no leg basically. 
+
+## Using the proxy
 1) register Slack Bot in the register endpoint, please note that `to_bot_token` is token provided by Roman.
 2) change bot's base URL to target this service `/slack`
 
