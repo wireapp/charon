@@ -3,7 +3,7 @@
 
 Charon is proxy converting Slack Bot API calls to Wire (using [Roman](https://github.com/dkovacevic/roman)) and back.
 
-Please not that this is simple proof of concept work, that was developed in few days just to prove that it is possible
+Please note that this is simple proof of concept work, that was developed in few days just to prove that it is possible
 to use existing Slack Bot and connect it to the [Wire](https://wire.com) API.
 The code looks accordingly.
 
