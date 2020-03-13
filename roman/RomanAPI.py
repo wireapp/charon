@@ -15,7 +15,8 @@ roman_api = Blueprint('roman_api', __name__)
 def messages_api():
     # TODO verify that this is the way
     config = get_configuration()
-    Thread(target=handle, args=(config, request.get_json(),)).start()
+    json = request.get_json()
+    Thread(target=handle, args=(config, json,)).start()
     return jsonify({'success': True})
 
 

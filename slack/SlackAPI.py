@@ -1,18 +1,24 @@
-from flask import Blueprint, request
+import logging
+
+from flask import Blueprint, request, jsonify
+
+from common.Utils import get_configuration, generate_timestamp
+from slack.converter.MessageConverter import NewMessage
 
 slack_api = Blueprint('slack_api', __name__)
 
 
 @slack_api.route('/chat.postMessage', methods=['POST'])
 def messages():
-    json = request.get_json()
-    print(type(json))
-    print(json)
-    return {'name': 'Slack API'}
+    config = get_configuration()
 
-# a = {'headers': {'User-Agent': 'Python/3.7.6 slackclient/2.5.0 Darwin/19.3.0', 'Content-Type':
-# 'application/json;charset=utf-8', 'Authorization': 'Bearer
-# <token>'}, 'data': None, 'files': None, 'params': None,
-# 'json': {'ts': '', 'username': 'pythonboardingbot', 'icon_emoji': ':robot_face:', 'blocks': [{'type': 'section',
-# 'text': {'type': 'mrkdwn', 'text': "Welcome to Slack! :wave: We're so glad you're here. :blush:\n\n*Get started by
-# completing the steps below:*"}}], 'channel': 'DUZK3KTC1'}, 'ssl': None, 'proxy': None, 'auth': None}
+    json = request.get_json()
+
+    logging.info(f'New message received: {json}')
+    bearer_token = request.headers['Authorization'].split("Bearer ", 1)[1]
+
+    logging.info('Bearer found.')
+    message_id = NewMessage(config).process_bot_message(bearer_token, json)
+    logging.info(f'Message sent with id: {message_id}')
+    # TODO determine corect response
+    return jsonify({'ok': True, 'channel': json['channel'], 'ts': generate_timestamp()})

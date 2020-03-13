@@ -8,56 +8,33 @@
 #    "files":"None",
 #    "params":"None",
 #    "json":{
-#       "ts":"",
-#       "username":"pythonboardingbot",
-#       "icon_emoji":":robot_face:",
-#       "blocks":[
-#          {
-#             "type":"section",
-#             "text":{
-#                "type":"mrkdwn",
-#                "text":"Welcome to Slack! :wave: We're so glad you're here. :blush:\n\n*Get started by completing the steps below:*"
-#             }
-#          },
-#          {
-#             "type":"divider"
-#          },
-#          {
-#             "type":"section",
-#             "text":{
-#                "type":"mrkdwn",
-#                "text":":white_large_square: *Add an emoji reaction to this message* :thinking_face:\nYou can quickly respond to any message on Slack with an emoji reaction.Reactions can be used for any purpose: voting, checking off to-do items, showing excitement."
-#             }
-#          },
-#          {
-#             "type":"context",
-#             "elements":[
-#                {
-#                   "type":"mrkdwn",
-#                   "text":":information_source: *<https://get.slack.help/hc/en-us/articles/206870317-Emoji-reactions|Learn How to Use Emoji Reactions>*"
-#                }
-#             ]
-#          },
-#          {
-#             "type":"divider"
-#          },
-#          {
-#             "type":"section",
-#             "text":{
-#                "type":"mrkdwn",
-#                "text":":white_large_square: *Pin this message* :round_pushpin:\nImportant messages and files can be pinned to the details pane in any channel or direct message, including group messages, for easy reference."
-#             }
-#          },
-#          {
-#             "type":"context",
-#             "elements":[
-#                {
-#                   "type":"mrkdwn",
-#                   "text":":information_source: *<https://get.slack.help/hc/en-us/articles/205239997-Pinning-messages-and-files|Learn How to Pin a Message>*"
-#                }
-#             ]
-#          }
-#       ],
-#       "channel":"CUZJW3ZKK"
-#    }
+# {'username': 'Echo Bot', 'icon_emoji': ':robot_face:', 'text': 'You said: hello bot', 'channel': 'GV04GUC82'}#    }
 # }
+import logging
+
+from common.Config import Config
+from roman.RomanClient import RomanClient
+from services.TokenDatabase import BotRegistration
+
+
+class NewMessage:
+    def __init__(self, config: Config):
+        self.config = config
+
+    def process_bot_message(self, bearer: str, json: dict):
+        bot = BotRegistration.get_bot_by_bearer(bearer)
+        token = bot.conversations[json['channel']]
+        msg = self.to_roman_message(json)
+        self.send_msg(msg, token)
+
+    def send_msg(self, msg: dict, token: str):
+        logging.info(f'Sending message: {msg}')
+        response = RomanClient(self.config).send_message(token, msg)
+        logging.info(f'Response: {response}')
+
+    @staticmethod
+    def to_roman_message(json: dict) -> dict:
+        return {
+            'type': 'text',
+            'text': json['text']
+        }
