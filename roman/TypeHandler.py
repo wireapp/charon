@@ -2,6 +2,7 @@ import logging
 
 from common.Config import Config
 from roman.converter.NewConversation import NewConversationConverter
+from roman.converter.NewMessage import NewMessageConverter
 from services.TokenDatabase import BotRegistration
 from slack.SlackBotClient import SlackBotClient
 
@@ -22,7 +23,8 @@ def handle(config: Config, json: dict, auth_header: str):
         # type is different
         logging.info(f'Unhandled type: {json["type"]}')
         pass
-    except Exception:
+    except Exception as ex:
+        print(ex)
         logging.exception(f'Exception occurred during processing the message.')
 
 
@@ -53,4 +55,8 @@ def init(config: Config, json: dict, bearer: str):
 
 def new_text(config: Config, json: dict, bearer: str):
     logging.info('New text message received.')
-    pass
+
+    bot = BotRegistration.get_bot(json['botId'])
+    converted = NewMessageConverter(config, bot).new_message_posted(json)
+    SlackBotClient(bot).send(converted)
+    print('New message sent.')
