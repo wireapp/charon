@@ -30,25 +30,29 @@
 #     "token": "...",                                   // Use this token to reply to this message - valid for 20 sec
 #     "text": "Bot Example Conversation"                // Conversation name
 # }
-from common.Config import Config
+
+from common.Config import Config, SlackBot
 from common.Utils import generate_timestamp
 from roman.RomanClient import RomanClient
-from services.TokenDatabase import RomanTokenStorage
 
 
 class NewConversationConverter:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, bot: SlackBot):
         self.config = config
+        self.bot = bot
 
     def new_conversation_created(self, roman_payload: dict) -> dict:
+        assert self.bot.id == roman_payload['botId']
+
         conversation = self.__get_conversation_info(roman_payload['token'])
+
         user = conversation['creator']
         timestamp = generate_timestamp()
-        bot_id = roman_payload['botId']
+
         return {
-            'token': RomanTokenStorage.storage[bot_id],
-            'api_app_id': bot_id,
-            'team_id': bot_id,  # TODO determine what is in our sense team id, lets assume this is only one team
+            'token': self.bot.to_bot_token,
+            'api_app_id': self.bot.id,
+            'team_id': self.bot.id,  # TODO determine what is in our sense team id, lets assume this is only one team
             'event': self.__convert_event(user, timestamp, conversation),
             'type': 'event_callback',
             'event_id': conversation['id'],

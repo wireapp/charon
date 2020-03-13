@@ -2,15 +2,15 @@ import json
 
 import requests
 
-from common.Config import Config
+from common.Config import SlackBot
 from common.Utils import generate_timestamp
 from slack.SigningService import SigningService
 
 
 class SlackBotClient:
-    def __init__(self, config: Config):
-        self.signing_secret = config.signing_secret
-        self.url = config.bot_url
+    def __init__(self, bot: SlackBot):
+        self.signing_secret = bot.signing_secret
+        self.url = bot.url
 
     def send(self, payload: dict):
         data = json.dumps(payload)
