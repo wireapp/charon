@@ -46,7 +46,9 @@ class NewConversationConverter:
 
         conversation = self.__get_conversation_info(roman_payload['token'])
 
-        user = conversation['creator']
+        # TODO use creator when available
+        # user = conversation['creator']
+        user = conversation['members'][0]['id']
         timestamp = generate_timestamp()
 
         return {

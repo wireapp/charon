@@ -16,7 +16,10 @@ def messages_api():
     # TODO verify that this is the way
     config = get_configuration()
     json = request.get_json()
-    Thread(target=handle, args=(config, json,)).start()
+
+    bearer_token = request.headers['Authorization'].split("Bearer ", 1)[1]
+
+    Thread(target=handle, args=(config, json, bearer_token,)).start()
     return jsonify({'success': True})
 
 
