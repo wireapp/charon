@@ -10,5 +10,4 @@ def generate_timestamp() -> int:
 
 
 def get_configuration() -> Config:
-    return Config(roman_url=app.config['ROMAN_URL'], signing_secret=app.config['SIGN_SECRET'],
-                  bot_url=app.config['BOT_URL'])
+    return Config(roman_url=app.config['ROMAN_URL'])
