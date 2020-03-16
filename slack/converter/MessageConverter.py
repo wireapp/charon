@@ -10,6 +10,7 @@
 #    "json":{
 # {'username': 'Echo Bot', 'icon_emoji': ':robot_face:', 'text': 'You said: hello bot', 'channel': 'GV04GUC82'}#    }
 # }
+
 import logging
 
 from common.Config import Config
@@ -24,7 +25,7 @@ class NewMessage:
     def process_bot_message(self, bearer: str, json: dict):
         bot = BotRegistration.get_bot_by_bearer(bearer)
         token = bot.conversations[json['channel']]
-        msg = self.to_roman_message(json)
+        msg = to_roman_message(json)
         self.send_msg(msg, token)
 
     def send_msg(self, msg: dict, token: str):
@@ -32,9 +33,21 @@ class NewMessage:
         response = RomanClient(self.config).send_message(token, msg)
         logging.info(f'Response: {response}')
 
-    @staticmethod
-    def to_roman_message(json: dict) -> dict:
-        return {
-            'type': 'text',
-            'text': json['text']
-        }
+
+def to_roman_message(json: dict) -> dict:
+    return {
+        'type': 'text',
+        'text': process_text(json)
+    }
+
+
+def process_text(json: dict) -> str:
+    text = json.get('text')
+    if text:
+        return text
+    blocks = json.get('blocks')
+    if not blocks:
+        logging.error('Wrong message format')
+        return 'Slack bot sent unrecognized message.'
+    texts = [block['text']['text'] for block in blocks if block['type'] == 'section']
+    return "/n".join(texts)
