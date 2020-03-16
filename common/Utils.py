@@ -1,3 +1,4 @@
+import os
 import time
 
 from flask import current_app as app
@@ -10,4 +11,5 @@ def generate_timestamp() -> int:
 
 
 def get_configuration() -> Config:
-    return Config(roman_url=app.config['ROMAN_URL'])
+    roman_url = os.environ.get('ROMAN_URL')
+    return Config(roman_url=roman_url if roman_url else app.config['ROMAN_URL'])
