@@ -13,6 +13,8 @@
 
 import logging
 
+import emoji
+
 from common.Config import Config
 from roman.RomanClient import RomanClient
 from services.TokenDatabase import BotRegistration
@@ -37,8 +39,15 @@ class NewMessage:
 def to_roman_message(json: dict) -> dict:
     return {
         'type': 'text',
-        'text': process_text(json)
+        'text': get_text(json)
     }
+
+
+def get_text(json: dict) -> str:
+    text = process_text(json)
+    text = process_bold_text(text)
+    text = process_emojis(text)
+    return text
 
 
 def process_text(json: dict) -> str:
@@ -50,4 +59,12 @@ def process_text(json: dict) -> str:
         logging.error('Wrong message format')
         return 'Slack bot sent unrecognized message.'
     texts = [block['text']['text'] for block in blocks if block['type'] == 'section']
-    return "/n".join(texts)
+    return "\n".join(texts)
+
+
+def process_emojis(test: str) -> str:
+    return emoji.emojize(test, use_aliases=True)
+
+
+def process_bold_text(text: str) -> str:
+    return text.replace('*', '**')

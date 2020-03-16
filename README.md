@@ -42,4 +42,14 @@ the message is transformed (some information are missing in the default calls fr
 Almost everything... this is just a PoC project which was tested only on Echo Bot,
 which sends everything back.
 But it works!
+
+### Version 0.0.1
+We developed echo bot based on the [Slack tutorial](https://github.com/slackapi/python-slackclient/tree/master/tutorial)
+and run it through the Charon.
+
 ![alt text](resources/working_example.png "Working example of the proxy.")
+
+### Version 0.0.2
+We added support for the blocks, emojis and run the official welcome slack bot from the [tutorial](https://github.com/slackapi/python-slackclient/tree/master/tutorial)
+through the proxy.
+![alt text](resources/welcome_bot-wire.png "Working example of the proxy.")
