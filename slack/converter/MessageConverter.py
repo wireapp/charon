@@ -67,4 +67,4 @@ def process_emojis(test: str) -> str:
 
 
 def process_bold_text(text: str) -> str:
-    return text.replace('*', '**')
+    return text.replace('*', '**')  # TODO use that only when there are *some text*
