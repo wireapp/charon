@@ -21,4 +21,4 @@ COPY --from=install /usr/local /usr/local
 COPY . /app/
 # start app
 EXPOSE 8080
-CMD python app.py --port=8080
+CMD python app.py
