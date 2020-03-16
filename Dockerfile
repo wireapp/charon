@@ -19,9 +19,9 @@ FROM install AS image
 COPY --from=install /usr/local /usr/local
 # copy app
 COPY . /app/
+
 # start app
 EXPOSE 8080
-
 ENV FLAS_APP=app
 ENV FLAS_ENV=production
 CMD flask run --port=8080 --host=0.0.0.0

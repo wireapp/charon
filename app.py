@@ -3,7 +3,7 @@ from importlib import util as importing
 
 from flask import Flask, jsonify
 
-from common.Utils import get_configuration
+from common.Utils import get_configuration, logger
 from roman.RomanAPI import roman_api
 from services.TokenDatabase import BotRegistration
 from slack.SlackAPI import slack_api
@@ -20,11 +20,15 @@ if importing.find_spec(config_file):
 
 BotRegistration.load_from_env()
 
+logger = logger(__name__)
+
 
 @app.route('/')
 def hello_world():
+    logger.info('GET on base.')
     return jsonify(dataclasses.asdict(get_configuration()))
 
 
 if __name__ == '__main__':
+    logger.info('Starting the application.')
     app.run(host="localhost", port=8080)
