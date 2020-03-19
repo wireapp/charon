@@ -10,14 +10,15 @@
 #    "json":{
 # {'username': 'Echo Bot', 'icon_emoji': ':robot_face:', 'text': 'You said: hello bot', 'channel': 'GV04GUC82'}#    }
 # }
+import logging
+
 import emoji
 
 from common.Config import Config
-from common.Utils import logger
 from roman.RomanClient import RomanClient
 from services.TokenDatabase import BotRegistration
 
-logger = logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class NewMessage:
@@ -25,6 +26,8 @@ class NewMessage:
         self.config = config
 
     def process_bot_message(self, bearer: str, json: dict):
+        logger.debug(f'Processing message {json}')
+
         bot = BotRegistration.get_bot_by_bearer(bearer)
         token = bot.conversations[json['channel']]
         msg = to_roman_message(json)
@@ -44,8 +47,13 @@ def to_roman_message(json: dict) -> dict:
 
 
 def get_text(json: dict) -> str:
+    logger.info('Parsing text from bot message')
     text = process_text(json)
+
+    logger.info('Reformatting bold text')
     text = process_bold_text(text)
+
+    logger.info('Creating emojis')
     text = process_emojis(text)
     return text
 
@@ -53,11 +61,17 @@ def get_text(json: dict) -> str:
 def process_text(json: dict) -> str:
     text = json.get('text')
     if text:
+        logger.info('Only text block found')
         return text
+
     blocks = json.get('blocks')
     if not blocks:
-        logger.error('Wrong message format')
+        logger.error(f'Wrong message format - {json}')
         return 'Slack bot sent unrecognized message.'
+
+    logger.info('Processing blocks.')
+    logger.debug(f'Blocks: {blocks}')
+
     texts = [block['text']['text'] for block in blocks if block['type'] == 'section']
     return "\n".join(texts)
 

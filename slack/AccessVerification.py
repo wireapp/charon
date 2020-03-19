@@ -1,11 +1,18 @@
+import logging
+
 from services.TokenDatabase import BotRegistration
+
+logger = logging.getLogger(__name__)
 
 
 def has_access(bearer: str, channel: str) -> bool:
+    logger.debug('Verifying access')
     try:
         get_roman_token_for_channel(bearer, channel)
+        logger.info('Access verified')
         return True
     except Exception:  # TODO probably key value error, need check
+        logger.warning('Access denied')
         return False
 
 

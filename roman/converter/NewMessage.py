@@ -1,7 +1,8 @@
+import logging
+
 from common.Config import Config, SlackBot
 from common.Utils import generate_timestamp
 from roman.RomanClient import RomanClient
-
 
 # {
 #    "token":"<token>",
@@ -43,19 +44,22 @@ from roman.RomanClient import RomanClient
 #    ]
 # }
 
+logger = logging.getLogger(__name__)
+
 
 class NewMessageConverter:
     def __init__(self, config: Config, bot: SlackBot):
-        self.config = config
+        self.client = RomanClient(config)
         self.bot = bot
 
     def new_message_posted(self, roman_payload: dict) -> dict:
         assert self.bot.id == roman_payload['botId']
 
+        logger.info(f'Processing message from bot {self.bot.id}')
         conversation = self.__get_conversation_info(roman_payload['token'])
-
         timestamp = generate_timestamp()
 
+        logger.info('Converting message.')
         return {
             'token': self.bot.to_bot_token,
             'team_id': self.bot.id,  # TODO determine what is in our sense team id, lets assume this is only one team
@@ -69,6 +73,7 @@ class NewMessageConverter:
 
     @staticmethod
     def __convert_event(timestamp: int, roman_payload: dict, conversation: dict):
+        logger.info('Converting event data.')
         return {
             'client_msg_id': roman_payload['userId'],
             'type': 'message',
@@ -82,4 +87,6 @@ class NewMessageConverter:
         }
 
     def __get_conversation_info(self, token: str) -> dict:
-        return RomanClient(self.config).get_conversation_info(token)
+        logger.info(f'Obtaining information about conversation')
+        logger.debug(f'Using token: {token}')
+        return self.client.get_conversation_info(token)

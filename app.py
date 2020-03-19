@@ -1,34 +1,30 @@
-import dataclasses
+import logging
 from importlib import util as importing
 
-from flask import Flask, jsonify
+from flask import Flask
 
-from common.Utils import get_configuration, logger
 from roman.RomanAPI import roman_api
 from services.TokenDatabase import BotRegistration
 from slack.SlackAPI import slack_api
 
+# Create app
 app = Flask(__name__)
 
 app.register_blueprint(roman_api, url_prefix='/roman')
 app.register_blueprint(slack_api, url_prefix='/slack')
 
+# Load configuration
 config_file = 'config'
-
 if importing.find_spec(config_file):
     app.config.from_object(config_file)
 
 BotRegistration.load_from_env()
 
-logger = logger(__name__)
+# Setup logging
+logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] - %(levelname)s - %(module)s: %(message)s')
+logger = logging.getLogger(__name__)
 
-
-@app.route('/')
-def hello_world():
-    logger.info('GET on base.')
-    return jsonify(dataclasses.asdict(get_configuration()))
-
-
+# App startup
 if __name__ == '__main__':
     logger.info('Starting the application.')
     app.run(host="localhost", port=8080)

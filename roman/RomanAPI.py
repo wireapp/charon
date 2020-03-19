@@ -1,6 +1,6 @@
-from threading import Thread
+import logging
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 
 from common.Config import SlackBot
 from common.Utils import get_configuration
@@ -8,23 +8,43 @@ from roman.TypeHandler import handle
 from services.TokenDatabase import BotRegistration
 
 roman_api = Blueprint('roman_api', __name__)
+logger = logging.getLogger(__name__)
 
 
 @roman_api.route('/messages', methods=['POST'])
 def messages_api():
     # TODO verify that this is the way
-    config = get_configuration()
+    logger.info('Incoming message')
+
     json = request.get_json()
 
-    bearer_token = request.headers['Authorization'].split("Bearer ", 1)[1]
+    try:
+        logger.info(f'Obtaining bearer')
+        bearer_token = request.headers['Authorization'].split("Bearer ", 1)[1]
+        logger.debug('Bearer exist')
+    except KeyError:
+        logger.error(f'Bearer token could not be obtained')
+        return Response('Bearer token not found.', 401)
 
-    Thread(target=handle, args=(config, json, bearer_token,)).start()
+    config = get_configuration()
+    handle(config, json, bearer_token)
+
+    return jsonify({'success': True})
+
+
+@roman_api.route('/status')
+def status():
+    """
+    Service API for the ingress
+    """
+    logger.debug('Stats call - ok')
     return jsonify({'success': True})
 
 
 @roman_api.route('/registration', methods=['POST'])
 def register_bot():
     r = request.get_json()
+    logger.info('Registering new bot.')
 
     BotRegistration.add_bot(SlackBot(
         id=r['id'],
@@ -33,4 +53,5 @@ def register_bot():
         to_proxy_token=r['proxy_token'],
         to_bot_token=r['bot_token']
     ))
+    logger.info(f'Bot with id {r["id"]} registered.')
     return jsonify({'success': True})

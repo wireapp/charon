@@ -31,21 +31,27 @@
 #     "text": "Bot Example Conversation"                // Conversation name
 # }
 
+import logging
+
 from common.Config import Config, SlackBot
 from common.Utils import generate_timestamp
 from roman.RomanClient import RomanClient
 
+logger = logging.getLogger(__name__)
+
 
 class NewConversationConverter:
     def __init__(self, config: Config, bot: SlackBot):
-        self.config = config
+        self.client = RomanClient(config)
         self.bot = bot
 
     def new_conversation_created(self, roman_payload: dict) -> dict:
         assert self.bot.id == roman_payload['botId']
+        logger.info(f'New conversation created for bot {self.bot.id}')
 
         conversation = self.__get_conversation_info(roman_payload['token'])
 
+        logger.debug(f'Conversation: {conversation}')
         # TODO use creator when available
         # user = conversation['creator']
         user = conversation['members'][0]['id']
@@ -64,6 +70,7 @@ class NewConversationConverter:
 
     @staticmethod
     def __convert_event(user: str, timestamp: int, conversation: dict):
+        logger.info('Converting event')
         return {
             'type': 'message',
             'subtype': 'group_join',
@@ -77,4 +84,5 @@ class NewConversationConverter:
         }
 
     def __get_conversation_info(self, token: str) -> dict:
-        return RomanClient(self.config).get_conversation_info(token)
+        logger.info('Obtaining information about conversation')
+        return self.client.get_conversation_info(token)

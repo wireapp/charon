@@ -1,5 +1,8 @@
 import hashlib
 import hmac
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SigningService:
@@ -7,6 +10,8 @@ class SigningService:
         self.secret = secret
 
     def generate_signature(self, timestamp: int, payload: bytes) -> str:
+        logger.info('Signing payload.')
+
         req = str.encode('v0:' + str(timestamp) + ':') + payload
         request_hash = 'v0=' + hmac.new(
             str.encode(self.secret),

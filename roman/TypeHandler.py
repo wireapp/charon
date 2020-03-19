@@ -24,13 +24,12 @@ def handle(config: Config, json: dict, auth_header: str):
     except KeyError:
         # type is different
         logger.info(f'Unhandled type: {json["type"]}')
-        pass
     except Exception as ex:
-        print(ex)
         logger.exception(f'Exception occurred during processing the message.')
+        logger.debug(f'Exception details: {ex}')
 
 
-def bot_request(config: Config, json: dict, bearer: str):
+def bot_request(_: Config, json: dict, bearer: str):
     bot_id = json['botId']
     logging.info(f'Bot request for bot id: {bot_id}')
 
@@ -44,7 +43,7 @@ def bot_request(config: Config, json: dict, bearer: str):
     logger.info(f'New conversation: {json["conversationId"]} for bot {bot_id} ')
 
 
-def init(config: Config, json: dict, bearer: str):
+def init(config: Config, json: dict, _: str):
     logging.info('Init received, converting it to slack call.')
     bot = BotRegistration.get_bot(json['botId'])
 
@@ -52,13 +51,13 @@ def init(config: Config, json: dict, bearer: str):
 
     logger.info('Init converted, sending to slack bot')
     SlackBotClient(bot).send(converted)
-    print('Init sent')
+    logger.info('Init sent')
 
 
-def new_text(config: Config, json: dict, bearer: str):
+def new_text(config: Config, json: dict, _: str):
     logging.info('New text message received.')
 
     bot = BotRegistration.get_bot(json['botId'])
     converted = NewMessageConverter(config, bot).new_message_posted(json)
     SlackBotClient(bot).send(converted)
-    print('New message sent.')
+    logger.info('New message sent.')
