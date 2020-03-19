@@ -33,7 +33,8 @@
 
 import logging
 
-from common.Config import Config, SlackBot
+from common.Config import Config
+from common.SlackBot import SlackBot
 from common.Utils import generate_timestamp
 from roman.RomanClient import RomanClient
 

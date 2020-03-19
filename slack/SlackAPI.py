@@ -2,7 +2,8 @@ import logging
 
 from flask import Blueprint, request, jsonify
 
-from common.Utils import get_configuration, generate_timestamp
+from common.Config import get_config
+from common.Utils import generate_timestamp
 from slack.converter.MessageConverter import NewMessage
 
 slack_api = Blueprint('slack_api', __name__)
@@ -21,7 +22,7 @@ def messages():
     bearer_token = request.headers['Authorization'].split("Bearer ", 1)[1]
 
     logger.info('Request authorized')
-    config = get_configuration()
+    config = get_config()
 
     logger.info('Processing the message.')
     message_id = NewMessage(config).process_bot_message(bearer_token, json)

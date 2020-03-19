@@ -1,15 +1,18 @@
-import os
 import time
+from typing import Callable
 
-from flask import current_app as app
-
-from common.Config import Config
+from flask import g
 
 
 def generate_timestamp() -> int:
     return int(time.time())
 
 
-def get_configuration() -> Config:
-    roman_url = os.environ.get('ROMAN_URL')
-    return Config(roman_url=roman_url if roman_url else app.config['ROMAN_URL'])
+def get_or_set(prop: str, factory: Callable):
+    """
+    Gets or sets context property.
+    """
+    if not hasattr(g, prop):
+        setattr(g, prop, factory())
+
+    return getattr(g, prop)

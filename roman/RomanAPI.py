@@ -2,8 +2,8 @@ import logging
 
 from flask import Blueprint, request, jsonify, Response
 
-from common.Config import SlackBot
-from common.Utils import get_configuration
+from common.Config import get_config
+from common.SlackBot import SlackBot
 from roman.TypeHandler import handle
 from services.TokenDatabase import BotRegistration
 
@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 @roman_api.route('/messages', methods=['POST'])
 def messages_api():
-    # TODO verify that this is the way
     logger.info('Incoming message')
 
     json = request.get_json()
@@ -26,7 +25,7 @@ def messages_api():
         logger.error(f'Bearer token could not be obtained')
         return Response('Bearer token not found.', 401)
 
-    config = get_configuration()
+    config = get_config()
     handle(config, json, bearer_token)
 
     return jsonify({'success': True})

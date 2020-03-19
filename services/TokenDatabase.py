@@ -1,7 +1,7 @@
 import logging
 import os
 
-from common.Config import SlackBot
+from common.SlackBot import SlackBot
 
 logger = logging.getLogger(__name__)
 

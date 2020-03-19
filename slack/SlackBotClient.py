@@ -3,7 +3,7 @@ import logging
 
 import requests
 
-from common.Config import SlackBot
+from common.SlackBot import SlackBot
 from common.Utils import generate_timestamp
 from slack.SigningService import SigningService
 
