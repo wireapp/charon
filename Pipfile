@@ -11,6 +11,7 @@ flask-restx = "*"
 requests = "*"
 emoji = "*"
 redis = "*"
+dacite = "*"
 
 [requires]
 python_version = "3.7"

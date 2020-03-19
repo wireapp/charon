@@ -40,54 +40,42 @@
 
 import logging
 
-from common.Config import Config
-from common.SlackBot import SlackBot
+from common.SlackBot import BotRegistration
 from common.Utils import generate_timestamp
-from roman.RomanClient import RomanClient
 
 logger = logging.getLogger(__name__)
 
 
-class NewMessageConverter:
-    def __init__(self, config: Config, bot: SlackBot):
-        self.client = RomanClient(config)
-        self.bot = bot
+def convert_message(bot: BotRegistration, roman_payload: dict, conversation: dict) -> dict:
+    bot_id = roman_payload['botId']
 
-    def new_message_posted(self, roman_payload: dict) -> dict:
-        assert self.bot.id == roman_payload['botId']
+    logger.info(f'Processing message from bot {bot_id}')
 
-        logger.info(f'Processing message from bot {self.bot.id}')
-        conversation = self.__get_conversation_info(roman_payload['token'])
-        timestamp = generate_timestamp()
+    timestamp = generate_timestamp()
 
-        logger.info('Converting message.')
-        return {
-            'token': self.bot.to_bot_token,
-            'team_id': self.bot.id,  # TODO determine what is in our sense team id, lets assume this is only one team
-            'api_app_id': self.bot.id,
-            'event': self.__convert_event(timestamp, roman_payload, conversation),
-            'type': 'event_callback',
-            'event_id': roman_payload['messageId'],
-            'event_time': timestamp,
-            'authed_users': [x['id'] for x in conversation['members']]
-        }
+    logger.info('Converting message.')
+    return {
+        'token': bot.bot_token,
+        'team_id': bot_id,  # TODO determine what is in our sense team id, lets assume this is only one team
+        'api_app_id': bot_id,
+        'event': convert_event(timestamp, roman_payload, conversation),
+        'type': 'event_callback',
+        'event_id': roman_payload['messageId'],
+        'event_time': timestamp,
+        'authed_users': [x['id'] for x in conversation['members']]
+    }
 
-    @staticmethod
-    def __convert_event(timestamp: int, roman_payload: dict, conversation: dict):
-        logger.info('Converting event data.')
-        return {
-            'client_msg_id': roman_payload['userId'],
-            'type': 'message',
-            'ts': timestamp,
-            'user': roman_payload['userId'],
-            'team': roman_payload['botId'],
-            'text': roman_payload['text'],
-            'channel': conversation['id'],
-            'event_ts': timestamp,
-            'channel_type': 'group'  # wire does not support anything else
-        }
 
-    def __get_conversation_info(self, token: str) -> dict:
-        logger.info(f'Obtaining information about conversation')
-        logger.debug(f'Using token: {token}')
-        return self.client.get_conversation_info(token)
+def convert_event(timestamp: int, roman_payload: dict, conversation: dict):
+    logger.info('Converting event data.')
+    return {
+        'client_msg_id': roman_payload['userId'],
+        'type': 'message',
+        'ts': timestamp,
+        'user': roman_payload['userId'],
+        'team': roman_payload['botId'],
+        'text': roman_payload['text'],
+        'channel': conversation['id'],
+        'event_ts': timestamp,
+        'channel_type': 'group'  # wire does not support anything else
+    }

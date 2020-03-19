@@ -3,7 +3,7 @@ import logging
 
 import requests
 
-from common.SlackBot import SlackBot
+from common.SlackBot import BotRegistration
 from common.Utils import generate_timestamp
 from slack.SigningService import SigningService
 
@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 
 
 class SlackBotClient:
-    def __init__(self, bot: SlackBot):
+    def __init__(self, bot: BotRegistration):
         self.signing = SigningService(bot.signing_secret)
-        self.url = bot.url
+        self.url = bot.bot_url
 
     def send(self, payload: dict):
         data = json.dumps(payload)

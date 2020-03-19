@@ -14,33 +14,13 @@ import logging
 
 import emoji
 
-from common.Config import Config
-from roman.RomanClient import RomanClient
-from services.TokenDatabase import BotRegistration
-
 logger = logging.getLogger(__name__)
 
 
-class NewMessage:
-    def __init__(self, config: Config):
-        self.client = RomanClient(config)
-
-    def process_bot_message(self, bearer: str, json: dict):
-        logger.debug(f'Processing message {json}')
-
-        bot = BotRegistration.get_bot_by_bearer(bearer)
-        token = bot.conversations[json['channel']]
-
-        msg = to_roman_message(json)
-        self.send_msg(msg, token)
-
-    def send_msg(self, msg: dict, token: str):
-        logger.info(f'Sending message: {msg}')
-        response = self.client.send_message(token, msg)
-        logger.info(f'Response: {response}')
-
-
-def to_roman_message(json: dict) -> dict:
+def convert_slack_message(json: dict) -> dict:
+    """
+    Convert slack message to Roman message.
+    """
     return {
         'type': 'text',
         'text': get_text(json)
@@ -48,8 +28,11 @@ def to_roman_message(json: dict) -> dict:
 
 
 def get_text(json: dict) -> str:
+    """
+    Process text part of the message.
+    """
     logger.info('Parsing text from bot message')
-    text = process_text(json)
+    text = format_text(json)
 
     logger.info('Reformatting bold text')
     text = process_bold_text(text)
@@ -59,7 +42,10 @@ def get_text(json: dict) -> str:
     return text
 
 
-def process_text(json: dict) -> str:
+def format_text(json: dict) -> str:
+    """
+    Formats text in the json payload.
+    """
     text = json.get('text')
     if text:
         logger.info('Only text block found')

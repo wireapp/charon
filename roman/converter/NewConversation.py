@@ -33,57 +33,46 @@
 
 import logging
 
-from common.Config import Config
-from common.SlackBot import SlackBot
+from common.SlackBot import BotRegistration
 from common.Utils import generate_timestamp
-from roman.RomanClient import RomanClient
 
 logger = logging.getLogger(__name__)
 
 
-class NewConversationConverter:
-    def __init__(self, config: Config, bot: SlackBot):
-        self.client = RomanClient(config)
-        self.bot = bot
+def convert_conversation(bot: BotRegistration, roman_payload: dict, conversation: dict) -> dict:
+    bot_id = roman_payload['botId']
 
-    def new_conversation_created(self, roman_payload: dict) -> dict:
-        assert self.bot.id == roman_payload['botId']
-        logger.info(f'New conversation created for bot {self.bot.id}')
+    logger.info(f'New conversation created for bot {bot_id}')
 
-        conversation = self.__get_conversation_info(roman_payload['token'])
+    logger.debug(f'Conversation: {conversation}')
+    # TODO use creator when available
+    # user = conversation['creator']
+    user = conversation['members'][0]['id']
+    timestamp = generate_timestamp()
 
-        logger.debug(f'Conversation: {conversation}')
-        # TODO use creator when available
-        # user = conversation['creator']
-        user = conversation['members'][0]['id']
-        timestamp = generate_timestamp()
+    return {
+        'token': bot.bot_token,
+        'api_app_id': bot_id,
+        'team_id': bot_id,
+        # TODO determine what is in our sense team id, lets assume this is only one team
+        'event': convert_event(user, timestamp, conversation),
+        'type': 'event_callback',
+        'event_id': f'{bot_id}:{conversation["id"]}',
+        'event_time': timestamp,
+        'authed_users': [x['id'] for x in conversation['members']],
+    }
 
-        return {
-            'token': self.bot.to_bot_token,
-            'api_app_id': self.bot.id,
-            'team_id': self.bot.id,  # TODO determine what is in our sense team id, lets assume this is only one team
-            'event': self.__convert_event(user, timestamp, conversation),
-            'type': 'event_callback',
-            'event_id': f'{self.bot}:{conversation["id"]}',
-            'event_time': timestamp,
-            'authed_users': [x['id'] for x in conversation['members']],
-        }
 
-    @staticmethod
-    def __convert_event(user: str, timestamp: int, conversation: dict):
-        logger.info('Converting event')
-        return {
-            'type': 'message',
-            'subtype': 'group_join',
-            'ts': timestamp,
-            'user': user,
-            'text': f'<@{user}> has joined the group',
-            'inviter': user,
-            'channel': conversation['id'],
-            'event_ts': timestamp,
-            'channel_type': 'group'  # wire does not support anything else
-        }
-
-    def __get_conversation_info(self, token: str) -> dict:
-        logger.info('Obtaining information about conversation')
-        return self.client.get_conversation_info(token)
+def convert_event(user: str, timestamp: int, conversation: dict):
+    logger.info('Converting event')
+    return {
+        'type': 'message',
+        'subtype': 'group_join',
+        'ts': timestamp,
+        'user': user,
+        'text': f'<@{user}> has joined the group',
+        'inviter': user,
+        'channel': conversation['id'],
+        'event_ts': timestamp,
+        'channel_type': 'group'  # wire does not support anything else
+    }
