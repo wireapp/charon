@@ -63,7 +63,7 @@ class NewConversationConverter:
             'team_id': self.bot.id,  # TODO determine what is in our sense team id, lets assume this is only one team
             'event': self.__convert_event(user, timestamp, conversation),
             'type': 'event_callback',
-            'event_id': conversation['id'],
+            'event_id': f'{self.bot}:{conversation["id"]}',
             'event_time': timestamp,
             'authed_users': [x['id'] for x in conversation['members']],
         }
