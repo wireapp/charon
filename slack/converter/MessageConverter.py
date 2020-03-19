@@ -23,19 +23,20 @@ logger = logging.getLogger(__name__)
 
 class NewMessage:
     def __init__(self, config: Config):
-        self.config = config
+        self.client = RomanClient(config)
 
     def process_bot_message(self, bearer: str, json: dict):
         logger.debug(f'Processing message {json}')
 
         bot = BotRegistration.get_bot_by_bearer(bearer)
         token = bot.conversations[json['channel']]
+
         msg = to_roman_message(json)
         self.send_msg(msg, token)
 
     def send_msg(self, msg: dict, token: str):
         logger.info(f'Sending message: {msg}')
-        response = RomanClient(self.config).send_message(token, msg)
+        response = self.client.send_message(token, msg)
         logger.info(f'Response: {response}')
 
 
