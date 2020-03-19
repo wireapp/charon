@@ -29,12 +29,12 @@ class BotRegistration:
     @staticmethod
     def load_from_env():
         logger.info('Loading bot from env.')
-        id = os.environ.get('BOT_ID')
-        if not id:
+        bot_id = os.environ.get('BOT_ID')
+        if not bot_id:
             return
         try:
             bot = SlackBot(
-                id=str(id),
+                id=str(bot_id),
                 url=os.environ['BOT_URL'],
                 signing_secret=os.environ['SLACK_SIGNING_SECRET'],
                 to_bot_token=os.environ['BOT_TOKEN'],

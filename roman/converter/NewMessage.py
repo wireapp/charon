@@ -1,9 +1,3 @@
-import logging
-
-from common.Config import Config, SlackBot
-from common.Utils import generate_timestamp
-from roman.RomanClient import RomanClient
-
 # {
 #    "token":"<token>",
 #    "team_id":"TVBTG5W22",
@@ -43,6 +37,13 @@ from roman.RomanClient import RomanClient
 #       "UUWTRSDJ6"
 #    ]
 # }
+
+import logging
+
+from common.Config import Config
+from common.SlackBot import SlackBot
+from common.Utils import generate_timestamp
+from roman.RomanClient import RomanClient
 
 logger = logging.getLogger(__name__)
 
