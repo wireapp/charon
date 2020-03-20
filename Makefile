@@ -4,5 +4,5 @@ docker-build:
 docker-run: docker-build
 	docker run --rm -p 8080:8080 lukaswire/charon
 
-docker-deploy: docker-build
+publish: docker-build
 	docker push lukaswire/charon
