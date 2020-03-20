@@ -40,8 +40,7 @@ def get_text(json: dict) -> dict:
     logger.info('Creating emojis')
     text = process_emojis(text)
     return {
-        'data': text,
-        'mentions': []
+        'data': text
     }
 
 
