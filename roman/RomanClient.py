@@ -18,7 +18,9 @@ class RomanClient:
         r = requests.post(f"{self.url}/conversation", json=payload, headers={"Authorization": f"Bearer {token}"})
 
         logger.info('Message sent')
-        return r.json()['messageId']
+        json = r.json()
+        logger.debug(f'Roman response: {json}')
+        return json
 
     def get_conversation_info(self, token: str) -> dict:
         logger.info('Obtaining conversation info')

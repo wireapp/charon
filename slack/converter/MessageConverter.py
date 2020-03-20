@@ -27,7 +27,7 @@ def convert_slack_message(json: dict) -> dict:
     }
 
 
-def get_text(json: dict) -> str:
+def get_text(json: dict) -> dict:
     """
     Process text part of the message.
     """
@@ -39,7 +39,10 @@ def get_text(json: dict) -> str:
 
     logger.info('Creating emojis')
     text = process_emojis(text)
-    return text
+    return {
+        'data': text,
+        'mentions': []
+    }
 
 
 def format_text(json: dict) -> str:

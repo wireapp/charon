@@ -22,6 +22,7 @@ def get_bot(authentication_code: str) -> BotRegistration:
     Retrieves bot by auth code.
     """
     data = get_db().hgetall(f'registration.{authentication_code}')
+    logger.debug(f'Retrieving: {data}')
     return from_dict(data_class=BotRegistration, data=data)
 
 
@@ -31,8 +32,9 @@ def register_conversation(authentication_code: str, bot_id: str, roman_token: st
     """
     bot = get_bot(authentication_code)
     payload = BotsConversation(bot_api_key=bot.bot_api_key, roman_token=roman_token)
-
-    get_db().hmset(f'conversation.{bot_id}', asdict(payload))
+    data = asdict(payload)
+    logger.debug(f'Saving: {data}')
+    get_db().hmset(f'conversation.{bot_id}', data)
 
 
 def get_conversation(bot_id: str) -> BotsConversation:
@@ -40,7 +42,8 @@ def get_conversation(bot_id: str) -> BotsConversation:
     Retrieves conversation by bot id.
     """
     data = get_db().hgetall(f'conversation.{bot_id}')
-    return from_dict(data_class=BotsConversation, data=data)
+    logger.debug(f'Retrieved payload - {data}')
+    return BotsConversation(bot_api_key=data['bot_api_key'], roman_token=data['roman_token'])
 
 
 def get_conversation_checked(bot_id: str, used_api_key: str) -> Optional[BotsConversation]:
