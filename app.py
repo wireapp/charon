@@ -1,7 +1,9 @@
 import logging
+import sys
 from importlib import util as importing
 
 from flask import Flask
+from flask_restx import Api
 
 from roman.RomanAPI import roman_api
 from slack.SlackAPI import slack_api
@@ -9,8 +11,20 @@ from slack.SlackAPI import slack_api
 # Create app
 app = Flask(__name__)
 
-app.register_blueprint(roman_api, url_prefix='/roman')
-app.register_blueprint(slack_api, url_prefix='/slack')
+# Set up Swagger and API
+authorizations = {
+    'bearer': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'Authorization'
+    }
+}
+
+api = Api(app, authorizations=authorizations)
+
+# Register namespaces
+api.add_namespace(roman_api, path='/roman')
+api.add_namespace(slack_api, path='/slack')
 
 # Load configuration
 config_file = 'config'
@@ -18,7 +32,8 @@ if importing.find_spec(config_file):
     app.config.from_object(config_file)
 
 # Setup logging
-logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] - %(levelname)s - %(module)s: %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] - %(levelname)s - %(module)s: %(message)s',
+                    stream=sys.stdout)
 logger = logging.getLogger(__name__)
 
 # App startup
