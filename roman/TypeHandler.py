@@ -25,7 +25,7 @@ def handle(json: dict, roman_token: str):
         }[message_type](json, roman_token)
     except KeyError:
         # type is different
-        logger.info(f'Unhandled type: {json["type"]}')
+        logger.info(f'Unhandled type: {message_type}')
     except Exception as ex:
         logger.exception(f'Exception occurred during processing the message.')
         logger.debug(f'Exception details: {ex}')
@@ -48,7 +48,7 @@ def init(json: dict, roman_token: str):
     config = get_config()
 
     # TODO consider executing this inside thread pool
-    conversation = get_conversation_info(config, roman_token)
+    conversation = get_conversation_info(config, json['token'])
     converted = convert_conversation(bot, roman_payload=json, conversation=conversation)
 
     logger.info('Init converted, sending to slack bot')
@@ -63,7 +63,7 @@ def new_text(json: dict, roman_token: str):
     config = get_config()
 
     # TODO consider executing this inside thread pool
-    conversation = get_conversation_info(config, roman_token)
+    conversation = get_conversation_info(config, json['token'])
     converted = convert_message(bot, roman_payload=json, conversation=conversation)
 
     logger.info('Message converted, sending to slack bot')
@@ -79,4 +79,9 @@ def get_conversation_info(config: Config, token: str) -> dict:
     logger.info('Obtaining information about conversation')
     logger.debug(f'Conversation info for token: {token}')
 
-    return RomanClient(config).get_conversation_info(token)
+    conversation = RomanClient(config).get_conversation_info(token)
+    if conversation.get('code') and conversation.get('message'):
+        logger.error(f'It was not possible to reach Roman. {conversation}')
+        raise Exception('Roman unreachable.')
+
+    return conversation
