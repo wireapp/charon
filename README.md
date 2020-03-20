@@ -11,14 +11,20 @@ The code looks accordingly.
 
 It uses `pipenv` for dependencies management. 
 Currently build on top of:
-- [Flask](https://github.com/pallets/flask)
-- [flask-restx](https://github.com/python-restx/flask-restx)
-- [requests](https://github.com/psf/requests)
+- [Flask](https://github.com/pallets/flask) - server
+- [flask-restx](https://github.com/python-restx/flask-restx) - requests processing, swagger
+- [requests](https://github.com/psf/requests) - sending HTTP requests to Roman/Bot
+- [emoji](https://github.com/carpedm20/emoji/) - emoji processing (from Slack to Wire)
+- [redis](https://github.com/andymccurdy/redis-py) - storage for information about bots and services
+- [dacite](https://github.com/konradhalas/dacite) - simple Dataclass parsing from JSON
 
 ## Running the proxy
 Please create file `config.py` which contains following runtime variables:
 ```python
-ROMAN_URL = '<Roman URL>'
+ROMAN_URL = 'http://proxy.services.zinfra.io'
+
+REDIS_URL = 'localhost'
+REDIS_PORT = '6379'
 ```
 
 ## How does Charon work
@@ -53,3 +59,6 @@ and run it through the Charon.
 We added support for the blocks, emojis and run the official welcome slack bot from the [tutorial](https://github.com/slackapi/python-slackclient/tree/master/tutorial)
 through the proxy.
 ![alt text](resources/welcome_bot-wire.png "Working example of the proxy.")
+
+### Version 0.0.3
+Support for multiple services and bots using one instance of Charon.
