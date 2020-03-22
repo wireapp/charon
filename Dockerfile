@@ -17,6 +17,8 @@ RUN pip install -r requirements.txt
 FROM install AS image
 # copy dependencies
 COPY --from=install /usr/local /usr/local
+# Workaround - see https://github.com/moby/moby/issues/37965
+RUN true
 # copy app
 COPY . /app/
 
