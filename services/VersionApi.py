@@ -10,7 +10,7 @@ version_api = Namespace('version', description='Service API for showing version 
 
 
 @version_api.route('/', methods=['GET'])
-class Messages(Resource):
+class Version(Resource):
     version_model = version_api.model('Message', {
         'version': fields.String(required=True, description='Version of running code.')
     })
