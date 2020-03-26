@@ -82,8 +82,8 @@ class Status(Resource):
         'status': fields.String(required=True, description='Indication of service\'s health.', enum=['OK', 'Failing'])
     })
 
-    @roman_api.marshal_with(status)
-    def status(self):
+    @roman_api.response(code=200, model=status, description="Returns ok if service is healthy.")
+    def get(self):
         """
         Service API for the ingress
         """

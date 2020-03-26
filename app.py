@@ -6,6 +6,7 @@ from flask import Flask
 from flask_restx import Api
 
 from roman.RomanAPI import roman_api
+from services.CharonApi import charon_api
 from slack.SlackAPI import slack_api
 
 # Create app
@@ -25,6 +26,7 @@ api = Api(app, authorizations=authorizations)
 # Register namespaces
 api.add_namespace(roman_api, path='/roman')
 api.add_namespace(slack_api, path='/slack')
+api.add_namespace(charon_api, path='/charon')
 
 # Load configuration
 config_file = 'config'

@@ -17,8 +17,12 @@ RUN pip install -r requirements.txt
 FROM install AS image
 # copy dependencies
 COPY --from=install /usr/local /usr/local
-# Workaround - see https://github.com/moby/moby/issues/37965
-RUN true
+
+# create version file
+ARG release_version=development
+ENV RELEASE_FILE_PATH=/app/release.txt
+RUN echo $release_version > /app/release.txt
+
 # copy app
 COPY . /app/
 

@@ -1,9 +1,11 @@
 version: '3'
 services:
-  bot:
+  charon:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - release_version=docker-compose
     image: lukaswire/charon
     container_name: charon
     ports:

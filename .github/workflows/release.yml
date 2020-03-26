@@ -16,5 +16,9 @@ jobs:
           repository: lukaswire/charon
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+          # pass release_version - latest tag
+          build_args: release_version=${{ env.RELEASE_VERSION }}
+          # tag the image with latest git tag
           tag_with_ref: true
+          # push only if this is the build containing tags
           push: ${{ startsWith(github.ref, 'refs/tags/') }}
