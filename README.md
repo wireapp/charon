@@ -50,16 +50,18 @@ Almost everything... this is just a PoC project which was tested only on Echo Bo
 which sends everything back.
 But it works!
 
-### Version 0.0.1
-We developed echo bot based on the [Slack tutorial](https://github.com/slackapi/python-slackclient/tree/master/tutorial)
-and run it through the Charon.
+## Releases
 
-![alt text](resources/working_example.png "Working example of the proxy.")
+### Version 0.0.3
+Support for multiple services and bots using one instance of Charon.
 
 ### Version 0.0.2
 We added support for the blocks, emojis and run the official welcome slack bot from the [tutorial](https://github.com/slackapi/python-slackclient/tree/master/tutorial)
 through the proxy.
 ![alt text](resources/welcome_bot-wire.png "Working example of the proxy.")
 
-### Version 0.0.3
-Support for multiple services and bots using one instance of Charon.
+### Version 0.0.1
+We developed echo bot based on the [Slack tutorial](https://github.com/slackapi/python-slackclient/tree/master/tutorial)
+and run it through the Charon.
+
+![alt text](resources/working_example.png "Working example of the proxy.")
