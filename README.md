@@ -1,7 +1,8 @@
 # Charon
-![Publish Docker Image](https://github.com/wireapp/charon/workflows/Publish%20Docker%20Image/badge.svg)
-## The bridge between Slack and Wire
+![CI/CD](https://github.com/wireapp/charon/workflows/CI/CD/badge.svg)
+![Release Pipeline](https://github.com/wireapp/charon/workflows/Release%20Pipeline/badge.svg)
 
+## Bridge between Slack and Wire
 Charon is proxy converting Slack Bot API calls to Wire (using [Roman](https://github.com/dkovacevic/roman)) and back.
 
 Please note that this is simple proof of concept work, that was developed in few days just to prove that it is possible
