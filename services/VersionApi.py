@@ -6,10 +6,10 @@ from flask_restx import Namespace, Resource, fields
 
 logger = logging.getLogger(__name__)
 
-version_api = Namespace('version', description='Service API for showing version of the code..')
+version_api = Namespace('service')
 
 
-@version_api.route('/', methods=['GET'])
+@version_api.route('version', methods=['GET'])
 class Version(Resource):
     version_model = version_api.model('Version', {
         'version': fields.String(required=True, description='Version of running code.')
@@ -24,7 +24,7 @@ def get_version() -> str:
     """
     Retrieves version from the flask app.
     """
-    if not g.version:
+    if 'version' not in g:
         g.version = read_version('development')
 
     return g.version
@@ -37,6 +37,7 @@ def read_version(default: str) -> str:
     file_path = os.environ.get('RELEASE_FILE_PATH')
     file_path = file_path if file_path else app.config.get('RELEASE_FILE_PATH')
     logger.info(f'File path: {file_path}')
+    version = None
     if file_path:
         with open(file_path, 'r') as file:
             version = file.readline().strip()

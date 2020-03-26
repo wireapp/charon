@@ -74,18 +74,3 @@ class RegisterBot(Resource):
         register_bot(token, bot)
         logger.info(f'Bot with id {bot.bot_api_key} registered.')
         return jsonify({'success': True})
-
-
-@roman_api.route('/status')
-class Status(Resource):
-    status = roman_api.model('ServiceStatus', {
-        'status': fields.String(required=True, description='Indication of service\'s health.', enum=['OK', 'Failing'])
-    })
-
-    @roman_api.response(code=200, model=status, description="Returns ok if service is healthy.")
-    def get(self):
-        """
-        Service API for the ingress
-        """
-        logger.debug('Stats call - ok')
-        return jsonify({'status': 'OK'})

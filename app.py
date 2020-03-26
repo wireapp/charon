@@ -6,6 +6,7 @@ from flask import Flask
 from flask_restx import Api
 
 from roman.RomanAPI import roman_api
+from services.StatusApi import status_api
 from services.VersionApi import version_api
 from slack.SlackAPI import slack_api
 
@@ -24,9 +25,11 @@ authorizations = {
 api = Api(app, authorizations=authorizations)
 
 # Register namespaces
-api.add_namespace(roman_api, path='/roman')
-api.add_namespace(slack_api, path='/slack')
-api.add_namespace(version_api, path='/version')
+api.add_namespace(roman_api)
+api.add_namespace(slack_api)
+
+api.add_namespace(version_api, path='/')
+api.add_namespace(status_api, path='/')
 
 # Load configuration
 config_file = 'config'
