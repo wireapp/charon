@@ -1,4 +1,5 @@
 # Charon
+[![GitHub version](https://badge.fury.io/gh/wireapp%2Fcharon.svg)](https://badge.fury.io/gh/wireapp%2Fcharon)
 ![CI/CD](https://github.com/wireapp/charon/workflows/CI/CD/badge.svg)
 ![Release Pipeline](https://github.com/wireapp/charon/workflows/Release%20Pipeline/badge.svg)
 
