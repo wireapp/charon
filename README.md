@@ -4,7 +4,8 @@
 ![Release Pipeline](https://github.com/wireapp/charon/workflows/Release%20Pipeline/badge.svg)
 
 ## Bridge between Slack and Wire
-Charon is proxy converting Slack Bot API calls to Wire (using [Roman](https://github.com/dkovacevic/roman)) and back.
+Charon is proxy converting Slack Bot API calls to Wire (using [Roman](https://github.com/dkovacevic/roman)) and back
+and thus allows to use subset of Slack Bots in the Wire. 
 
 Please note that this is simple proof of concept work, that was developed in few days just to prove that it is possible
 to use existing Slack Bot and connect it to the [Wire](https://wire.com) API.
