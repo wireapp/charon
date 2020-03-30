@@ -88,7 +88,7 @@ Charon has public [docker image](https://hub.docker.com/r/lukaswire/charon).
 lukaswire/charon
 ```
 Tag `latest` is current master branch - each commit is build and tagged as `latest`.
-[Releases](https://github.com/wireapp/charon/releases) have then images with corresponding.
+[Releases](https://github.com/wireapp/charon/releases) have then images with corresponding tag.
 
 ## Development
 It uses `pipenv` for dependencies management. 
