@@ -26,7 +26,7 @@ the message is transformed (some information are missing in the default calls fr
 ## Slack bot onboarding
 To add new Slack bot instance to Charon one must register the bot in the Roman and in the Charon.
 Both services have Swagger API for registration process or one can use CLI 
-in from the [repository with example](https://github.com/LukasForst/slack-onboarding-bot/tree/master/cli). 
+from the [repository with example](https://github.com/LukasForst/slack-onboarding-bot/tree/master/cli). 
 
 ## Example
 Example bot with complete CLI and description can be found [here](https://github.com/LukasForst/slack-onboarding-bot).
