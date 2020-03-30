@@ -6,3 +6,9 @@ docker-run: docker-build
 
 publish: docker-build
 	docker push lukaswire/charon
+
+db:
+	docker-compose up -d redis
+
+up:
+	docker-compose up
