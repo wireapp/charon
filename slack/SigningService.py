@@ -12,9 +12,5 @@ class SigningService:
     def generate_signature(self, timestamp: int, payload: bytes) -> str:
         logger.info('Signing payload.')
 
-        req = str.encode('v0:' + str(timestamp) + ':') + payload
-        request_hash = 'v0=' + hmac.new(
-            str.encode(self.secret),
-            req, hashlib.sha256
-        ).hexdigest()
-        return request_hash
+        req = f'v0:{str(timestamp)}:'.encode('utf-8') + payload
+        return 'v0=' + hmac.new(self.secret.encode('utf-8'), req, hashlib.sha256).hexdigest()

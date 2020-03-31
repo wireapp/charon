@@ -54,7 +54,7 @@ def parse_text(json: dict) -> str:
     Formats text in the json payload.
     """
     data = [get_text(json.get('text')), get_blocks(json.get('blocks')), get_attachments(json.get('attachments'))]
-    return '\n'.join([part.strip() for part in data if (part and part != '')])
+    return '\n'.join([part.strip() for part in data if part])
 
 
 def get_text(txt: Optional[str]) -> str:
@@ -64,7 +64,7 @@ def get_text(txt: Optional[str]) -> str:
 
     logger.info('Text found')
     logger.debug(f'Text: {txt}')
-    return txt if txt else ''
+    return txt
 
 
 def get_blocks(blocks: Optional[List[dict]]) -> str:
@@ -75,7 +75,7 @@ def get_blocks(blocks: Optional[List[dict]]) -> str:
     logger.info('Processing blocks.')
     logger.debug(f'Blocks: {blocks}')
 
-    texts = [block['text']['text'] for block in blocks if block['type'] == 'section']
+    texts = [block['text']['text'] for block in blocks if block.get('type') == 'section']
     return '\n'.join(texts)
 
 
@@ -98,7 +98,7 @@ def get_fields(fields: Optional[List[dict]]) -> str:
     logger.info('Fields found')
     logger.debug(f'Fields: {fields}')
 
-    data = [f'_{field["title"]}:_' + (' ' if field['short'] else '\n') + field['value'] for field in fields]
+    data = [f'_{field["title"]}:_' + (' ' if field.get('short') else '\n') + field['value'] for field in fields]
     return '\n'.join(data)
 
 

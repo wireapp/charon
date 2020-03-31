@@ -103,7 +103,7 @@ class RegisterHookOnlyBot(Resource):
             bot_api_key = json.get('bot_api_key')
 
             # validate that api key is set
-            if not bot_api_key or bot_api_key == '':
+            if not bot_api_key:
                 logger.info('No API key provided, generating new.')
                 bot_api_key = str(uuid.uuid4())
         except Exception:
