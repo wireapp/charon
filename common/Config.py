@@ -1,9 +1,12 @@
+import logging
 import os
 from dataclasses import dataclass
 
 from flask import current_app as app
 
 from common.Utils import get_or_set
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -36,5 +39,8 @@ def get_prop(name: str) -> str:
     """
     Gets property from environment or from the flask env.
     """
-    env = os.environ.get(name)
-    return env if env else app.config[name]
+    env = os.environ.get(name, app.config.get(name))
+    if not env:
+        logger.error('It was not possible to retrieve configuration!')
+        raise EnvironmentError('No existing configuration found!')
+    return env
