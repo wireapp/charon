@@ -11,6 +11,7 @@
 # {'username': 'Echo Bot', 'icon_emoji': ':robot_face:', 'text': 'You said: hello bot', 'channel': 'GV04GUC82'}#    }
 # }
 import logging
+import re
 from typing import List, Optional
 
 import emoji
@@ -35,6 +36,9 @@ def build_wire_text(json: dict) -> dict:
     logger.info('Parsing text from bot message')
     text = parse_text(json)
 
+    logger.info('Converting links to markdown')
+    text = process_links(text)
+
     logger.info('Reformatting text')
     text = transform_formatting(text)
 
@@ -56,8 +60,10 @@ def parse_text(json: dict) -> str:
 
 
 def get_text(txt: Optional[str]) -> str:
-    if txt:
-        logger.info('Text block found.')
+    if not txt:
+        logger.info('No text found')
+        return ''
+
     logger.info('Text found')
     logger.debug(f'Text: {txt}')
     return txt if txt else ''
@@ -67,6 +73,7 @@ def get_blocks(blocks: Optional[List[dict]]) -> str:
     if not blocks:
         logger.info('No blocks found')
         return ''
+
     logger.info('Processing blocks.')
     logger.debug(f'Blocks: {blocks}')
 
@@ -74,7 +81,7 @@ def get_blocks(blocks: Optional[List[dict]]) -> str:
     return "\n".join(texts)
 
 
-def get_attachments(attachments: dict) -> str:
+def get_attachments(attachments: Optional[dict]) -> str:
     if not attachments:
         logger.info('No attachments found')
         return ''
@@ -85,7 +92,7 @@ def get_attachments(attachments: dict) -> str:
     return attachments.get('fields')
 
 
-def get_fields(fields: List[dict]) -> str:
+def get_fields(fields: Optional[List[dict]]) -> str:
     if not fields:
         logger.info('No fields found')
         return ''
@@ -97,11 +104,32 @@ def get_fields(fields: List[dict]) -> str:
     return '\n'.join(data)
 
 
+def process_links(text: str) -> str:
+    def create_link(matchobj) -> str:
+        match = matchobj.group(1)
+        try:
+            url, link = match.split('|')
+            return f'[{link}]({url})'
+        except Exception:
+            logger.warning('It was not possible to split text in URL for link, ignoring.')
+        return match
+
+    return re.sub('<(.+?)>', create_link, text)
+
+
 def process_emojis(text: str) -> str:
     return emoji.emojize(text, use_aliases=True)
 
 
 def transform_formatting(text: str) -> str:
-    bold_fixed = text.replace('*', '**')  # TODO use that only when there is *some text*
-    italic_fixed = bold_fixed.replace('_', '*')  # TODO  use that only when there is _some text_
+    def bold_fix(matchobj):
+        match = matchobj.group(1)
+        return f'**{match}**'
+
+    def italic_fix(matchobj):
+        match = matchobj.group(1)
+        return f'*{match}*'
+
+    bold_fixed = re.sub('\*(.+?)\*', bold_fix, text)
+    italic_fixed = re.sub('_(.+?)_', italic_fix, bold_fixed)
     return italic_fixed

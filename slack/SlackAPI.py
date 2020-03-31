@@ -43,3 +43,22 @@ class Messages(Resource):
         handle(conversation, json)
 
         return jsonify({'ok': True, 'channel': bot_id, 'ts': generate_timestamp()})
+
+
+@slack_api.route('/webhook', methods=['POST'])
+class Webhooks(Resource):
+    dummy_model = slack_api.model('Message', {
+        'channel': fields.String(required=True, description='Channel to which is the request sent.')
+    })
+
+    @slack_api.doc(
+        body=dummy_model
+    )
+    def post(self):
+        logger.info('New message from bot received.')
+
+        json = request.get_json()
+        logger.debug(f'Message payload: {json}')
+        logger.debug(f'Message headers: {request.headers}')
+
+        return jsonify({'ok': True, 'ts': generate_timestamp()})
