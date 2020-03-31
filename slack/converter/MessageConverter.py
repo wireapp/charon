@@ -53,10 +53,8 @@ def parse_text(json: dict) -> str:
     """
     Formats text in the json payload.
     """
-    text = get_text(json.get('text'))
-    blocks = get_blocks(json.get('blocks'))
-    attachments = get_attachments(json.get('attachments'))
-    return f'{text}\n{blocks}\n{attachments}'
+    data = [get_text(json.get('text')), get_blocks(json.get('blocks')), get_attachments(json.get('attachments'))]
+    return '\n'.join([part.strip() for part in data if (part and part != '')])
 
 
 def get_text(txt: Optional[str]) -> str:
@@ -78,7 +76,7 @@ def get_blocks(blocks: Optional[List[dict]]) -> str:
     logger.debug(f'Blocks: {blocks}')
 
     texts = [block['text']['text'] for block in blocks if block['type'] == 'section']
-    return "\n".join(texts)
+    return '\n'.join(texts)
 
 
 def get_attachments(attachments: Optional[dict]) -> str:
@@ -89,7 +87,7 @@ def get_attachments(attachments: Optional[dict]) -> str:
     logger.info('Attachments found')
     logger.debug(f'Attachments: {attachments}')
 
-    return attachments.get('fields')
+    return "\n".join([get_fields(attachment.get('fields')) for attachment in attachments])
 
 
 def get_fields(fields: Optional[List[dict]]) -> str:
@@ -100,7 +98,7 @@ def get_fields(fields: Optional[List[dict]]) -> str:
     logger.info('Fields found')
     logger.debug(f'Fields: {fields}')
 
-    data = [f'_{field["title"]}:_' + ' ' if field['short'] else '\n' + field['value'] for field in fields]
+    data = [f'_{field["title"]}:_' + (' ' if field['short'] else '\n') + field['value'] for field in fields]
     return '\n'.join(data)
 
 
@@ -112,7 +110,7 @@ def process_links(text: str) -> str:
             return f'[{link}]({url})'
         except Exception:
             logger.warning('It was not possible to split text in URL for link, ignoring.')
-        return match
+            return f' {match} '
 
     return re.sub('<(.+?)>', create_link, text)
 

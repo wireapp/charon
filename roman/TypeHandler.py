@@ -36,26 +36,23 @@ def bot_request(json: dict, roman_token: str):
 
     logging.info(f'Bot request for bot id: {bot_id}')
 
-    bot = register_conversation(authentication_code=roman_token, bot_id=bot_id, roman_token=json['token'])
+    register_conversation(authentication_code=roman_token, bot_id=bot_id, roman_token=json['token'])
     logger.info(f'New conversation: {json["conversationId"]} for bot {bot_id} ')
-
-    # create URL if this is webhook only bot
-    if not isinstance(bot, TwoWayBot):
-        logger.info('Conversation registered for webhook only bot.')
-
-        config = get_config()
-        url = f'{config.charon_url}/slack/webhook/{bot.bot_api_key}/{bot_id}'
-        logger.debug(f'URL generated - {url}')
-
-        RomanClient(config).send_text_message(roman_token, f'Webhook generated: `{url}`')
 
 
 def init(json: dict, roman_token: str):
     logging.info('Init received, converting it to slack call.')
 
     bot = get_bot(roman_token)
+
     if not isinstance(bot, TwoWayBot):
-        logger.info('Init for webhook only bot, skipping.')
+        logger.info('Conversation registered for webhook only bot.')
+
+        config = get_config()
+        url = f'{config.charon_url}/slack/webhook/{bot.bot_api_key}/{json["botId"]}'
+        logger.debug(f'URL generated - {url}')
+
+        RomanClient(config).send_text_message(json['token'], f'Webhook generated: `{url}`')
         return
 
     config = get_config()
@@ -97,7 +94,7 @@ def get_conversation_info(config: Config, token: str) -> dict:
     logger.debug(f'Conversation info for token: {token}')
 
     conversation = RomanClient(config).get_conversation_info(token)
-    if conversation.get('code') and conversation.get('message'):
+    if conversation.get('message'):
         logger.error(f'It was not possible to reach Roman. {conversation}')
         raise Exception('Roman unreachable.')
 
