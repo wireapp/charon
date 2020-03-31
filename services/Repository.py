@@ -26,7 +26,7 @@ def get_bot(authentication_code: str) -> BotRegistration:
     return from_dict(data_class=BotRegistration, data=data)
 
 
-def register_conversation(authentication_code: str, bot_id: str, roman_token: str):
+def register_conversation(authentication_code: str, bot_id: str, roman_token: str) -> BotRegistration:
     """
     Register new conversation for the authentication_code.
     """
@@ -35,6 +35,7 @@ def register_conversation(authentication_code: str, bot_id: str, roman_token: st
     data = asdict(payload)
     logger.debug(f'Saving: {data}')
     get_db().hmset(f'conversation.{bot_id}', data)
+    return bot
 
 
 def get_conversation(bot_id: str) -> BotsConversation:

@@ -36,9 +36,17 @@ def bot_request(json: dict, roman_token: str):
 
     logging.info(f'Bot request for bot id: {bot_id}')
 
-    register_conversation(authentication_code=roman_token, bot_id=bot_id, roman_token=json['token'])
-
+    bot = register_conversation(authentication_code=roman_token, bot_id=bot_id, roman_token=json['token'])
     logger.info(f'New conversation: {json["conversationId"]} for bot {bot_id} ')
+
+    if bot.webhook_only:
+        logger.info('Conversation registered for webhook only bot.')
+
+        config = get_config()
+        url = f'{config.charon_url}/slack/webhook/{bot.bot_api_key}/{bot_id}'
+        logger.debug(f'URL generated - {url}')
+
+        RomanClient(config).send_text_message(roman_token, f'Webhook generated: `{url}`')
 
 
 def init(json: dict, roman_token: str):

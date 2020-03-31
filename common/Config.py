@@ -13,6 +13,8 @@ class Config:
     redis_url: str
     redis_port: int
 
+    charon_url: str
+
 
 def get_config() -> Config:
     """
@@ -26,7 +28,8 @@ def build_configuration() -> Config:
     Builds configuration from environment or from the Flask properties
     """
     return Config(roman_url=get_prop('ROMAN_URL'), redis_url=get_prop('REDIS_URL'),
-                  redis_port=int(get_prop('REDIS_PORT')))
+                  redis_port=int(get_prop('REDIS_PORT')),
+                  charon_url=get_prop('CHARON_URL'))
 
 
 def get_prop(name: str) -> str:

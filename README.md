@@ -70,17 +70,22 @@ Known limitations so far:
 There are, for sure, more limitation then those listed here, but we haven't found out yet.
 
 ## Running Charon
-Charon needs following configuration - `ROMAN_URL`, `REDIS_URL`, `REDIS_PORT`.
+Charon needs following configuration - `ROMAN_URL`, `REDIS_URL`, `REDIS_PORT` and `CHARON_URL`.
 To run Charon locally, please create file `config.py` which contains following runtime variables:
 ```python
 ROMAN_URL = 'http://proxy.services.zinfra.io'
 
 REDIS_URL = 'localhost'
 REDIS_PORT = '6379'
+
+CHARON_URL = 'http://localhost:8080'
 ```
 and spin the Redis instance - there's one in the docker-compose.
-
 To run Charon inside docker-compose, just execute `docker-compose up`.
+
+#### Configuration
+* `CHARON_URL` - is URL under which is Charon visible from public internet, 
+it is used to generate unique URLs for the webhook only bots
 
 ## Docker Images
 Charon has public [docker image](https://hub.docker.com/r/lukaswire/charon).

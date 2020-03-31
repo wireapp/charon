@@ -11,6 +11,9 @@ class RomanClient:
     def __init__(self, config: Config):
         self.url = config.roman_url
 
+    def send_text_message(self, token: str, payload: str) -> str:
+        return self.send_message(token, {'type': 'text', 'text': {'data': payload}})
+
     def send_message(self, token: str, payload: dict) -> str:
         logger.info(f'Sending message to roman.')
         logger.debug(f'Message payload: {payload}')
