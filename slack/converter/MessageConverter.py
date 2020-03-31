@@ -11,6 +11,7 @@
 # {'username': 'Echo Bot', 'icon_emoji': ':robot_face:', 'text': 'You said: hello bot', 'channel': 'GV04GUC82'}#    }
 # }
 import logging
+from typing import List, Optional
 
 import emoji
 
@@ -23,19 +24,19 @@ def convert_slack_message(json: dict) -> dict:
     """
     return {
         'type': 'text',
-        'text': get_text(json)
+        'text': build_wire_text(json)
     }
 
 
-def get_text(json: dict) -> dict:
+def build_wire_text(json: dict) -> dict:
     """
     Process text part of the message.
     """
     logger.info('Parsing text from bot message')
-    text = format_text(json)
+    text = parse_text(json)
 
-    logger.info('Reformatting bold text')
-    text = process_bold_text(text)
+    logger.info('Reformatting text')
+    text = transform_formatting(text)
 
     logger.info('Creating emojis')
     text = process_emojis(text)
@@ -44,20 +45,28 @@ def get_text(json: dict) -> dict:
     }
 
 
-def format_text(json: dict) -> str:
+def parse_text(json: dict) -> str:
     """
     Formats text in the json payload.
     """
-    text = json.get('text')
-    if text:
-        logger.info('Only text block found')
-        return text
+    text = get_text(json.get('text'))
+    blocks = get_blocks(json.get('blocks'))
+    attachments = get_attachments(json.get('attachments'))
+    return f'{text}\n{blocks}\n{attachments}'
 
-    blocks = json.get('blocks')
+
+def get_text(txt: Optional[str]) -> str:
+    if txt:
+        logger.info('Text block found.')
+    logger.info('Text found')
+    logger.debug(f'Text: {txt}')
+    return txt if txt else ''
+
+
+def get_blocks(blocks: Optional[List[dict]]) -> str:
     if not blocks:
-        logger.error(f'Wrong message format - {json}')
-        return 'Slack bot sent unrecognized message.'
-
+        logger.info('No blocks found')
+        return ''
     logger.info('Processing blocks.')
     logger.debug(f'Blocks: {blocks}')
 
@@ -65,9 +74,34 @@ def format_text(json: dict) -> str:
     return "\n".join(texts)
 
 
-def process_emojis(test: str) -> str:
-    return emoji.emojize(test, use_aliases=True)
+def get_attachments(attachments: dict) -> str:
+    if not attachments:
+        logger.info('No attachments found')
+        return ''
+
+    logger.info('Attachments found')
+    logger.debug(f'Attachments: {attachments}')
+
+    return attachments.get('fields')
 
 
-def process_bold_text(text: str) -> str:
-    return text.replace('*', '**')  # TODO use that only when there are *some text*
+def get_fields(fields: List[dict]) -> str:
+    if not fields:
+        logger.info('No fields found')
+        return ''
+
+    logger.info('Fields found')
+    logger.debug(f'Fields: {fields}')
+
+    data = [f'_{field["title"]}:_' + ' ' if field['short'] else '\n' + field['value'] for field in fields]
+    return '\n'.join(data)
+
+
+def process_emojis(text: str) -> str:
+    return emoji.emojize(text, use_aliases=True)
+
+
+def transform_formatting(text: str) -> str:
+    bold_fixed = text.replace('*', '**')  # TODO use that only when there is *some text*
+    italic_fixed = bold_fixed.replace('_', '*')  # TODO  use that only when there is _some text_
+    return italic_fixed
