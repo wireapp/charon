@@ -33,13 +33,13 @@
 
 import logging
 
-from common.SlackBot import BotRegistration
+from common.SlackBot import TwoWayBot
 from common.Utils import generate_timestamp
 
 logger = logging.getLogger(__name__)
 
 
-def convert_conversation(bot: BotRegistration, roman_payload: dict, conversation: dict) -> dict:
+def convert_conversation(bot: TwoWayBot, roman_payload: dict, conversation: dict) -> dict:
     bot_id = roman_payload['botId']
 
     logger.info(f'New conversation created for bot {bot_id}')

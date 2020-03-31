@@ -130,6 +130,6 @@ def transform_formatting(text: str) -> str:
         match = matchobj.group(1)
         return f'*{match}*'
 
-    bold_fixed = re.sub('\*(.+?)\*', bold_fix, text)
-    italic_fixed = re.sub('_(.+?)_', italic_fix, bold_fixed)
+    bold_fixed = re.sub(r'\*(.+?)\*', bold_fix, text)
+    italic_fixed = re.sub(r'_(.+?)_', italic_fix, bold_fixed)
     return italic_fixed

@@ -1,7 +1,7 @@
 import logging
 
 from common.Config import get_config, Config
-from common.SlackBot import BotRegistration
+from common.SlackBot import TwoWayBot
 from roman.RomanClient import RomanClient
 from roman.converter.NewConversation import convert_conversation
 from roman.converter.NewMessage import convert_message
@@ -39,7 +39,8 @@ def bot_request(json: dict, roman_token: str):
     bot = register_conversation(authentication_code=roman_token, bot_id=bot_id, roman_token=json['token'])
     logger.info(f'New conversation: {json["conversationId"]} for bot {bot_id} ')
 
-    if bot.webhook_only:
+    # create URL if this is webhook only bot
+    if not isinstance(bot, TwoWayBot):
         logger.info('Conversation registered for webhook only bot.')
 
         config = get_config()
@@ -53,6 +54,10 @@ def init(json: dict, roman_token: str):
     logging.info('Init received, converting it to slack call.')
 
     bot = get_bot(roman_token)
+    if not isinstance(bot, TwoWayBot):
+        logger.info('Init for webhook only bot, skipping.')
+        return
+
     config = get_config()
 
     # TODO consider executing this inside thread pool
@@ -68,6 +73,10 @@ def new_text(json: dict, roman_token: str):
     logging.info('New text message received.')
 
     bot = get_bot(roman_token)
+    if not isinstance(bot, TwoWayBot):
+        logger.info('Init for webhook only bot, skipping.')
+        return
+
     config = get_config()
 
     # TODO consider executing this inside thread pool
@@ -79,7 +88,7 @@ def new_text(json: dict, roman_token: str):
     logger.info('New message sent.')
 
 
-def send(bot: BotRegistration, payload: dict):
+def send(bot: TwoWayBot, payload: dict):
     SlackBotClient(bot).send(payload)
 
 

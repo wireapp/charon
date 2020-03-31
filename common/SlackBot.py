@@ -1,15 +1,16 @@
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
-class BotRegistration:
+class Bot:
+    bot_api_key: str
+
+
+@dataclass
+class TwoWayBot(Bot):
     bot_token: str
     signing_secret: str
     bot_url: str
-    # None only during registration request from client
-    bot_api_key: Optional[str]
-    webhook_only: bool = False
 
 
 @dataclass

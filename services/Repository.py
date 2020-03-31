@@ -5,28 +5,32 @@ from typing import Optional
 from dacite import from_dict
 
 from common.Db import get_db
-from common.SlackBot import BotRegistration, BotsConversation
+from common.SlackBot import BotsConversation, Bot, TwoWayBot
 
 logger = logging.getLogger(__name__)
 
 
-def register_bot(authentication_code: str, bot: BotRegistration):
+def register_bot(authentication_code: str, bot: Bot):
     """
     Register bot to the system.
     """
     get_db().hmset(f'registration.{authentication_code}', asdict(bot))
 
 
-def get_bot(authentication_code: str) -> BotRegistration:
+def get_bot(authentication_code: str) -> Bot:
     """
     Retrieves bot by auth code.
     """
     data = get_db().hgetall(f'registration.{authentication_code}')
     logger.debug(f'Retrieving: {data}')
-    return from_dict(data_class=BotRegistration, data=data)
+    # find out whether this bot has URL, if so it is TwoWayBot
+    if data and data.get('bot_url'):
+        return from_dict(data_class=TwoWayBot, data=data)
+
+    return from_dict(data_class=Bot, data=data)
 
 
-def register_conversation(authentication_code: str, bot_id: str, roman_token: str) -> BotRegistration:
+def register_conversation(authentication_code: str, bot_id: str, roman_token: str) -> Bot:
     """
     Register new conversation for the authentication_code.
     """
