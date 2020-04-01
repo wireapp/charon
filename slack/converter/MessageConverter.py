@@ -1,20 +1,8 @@
-# {
-#    "headers":{
-#       "User-Agent":"Python/3.7.6 slackclient/2.5.0 Darwin/19.3.0",
-#       "Content-Type":"application/json;charset=utf-8",
-#       "Authorization":"Bearer <token>"
-#    },
-#    "data":"None",
-#    "files":"None",
-#    "params":"None",
-#    "json":{
-# {'username': 'Echo Bot', 'icon_emoji': ':robot_face:', 'text': 'You said: hello bot', 'channel': 'GV04GUC82'}#    }
-# }
 import logging
-import re
-from typing import List, Optional
 
-import emoji
+from slack.converter.Attachments import get_attachments
+from slack.converter.Body import get_text, get_blocks
+from slack.converter.TextFormatting import process_links, process_emojis, transform_formatting
 
 logger = logging.getLogger(__name__)
 
@@ -54,102 +42,9 @@ def parse_text(json: dict) -> str:
     """
     Formats text in the json payload.
     """
-    data = [get_text(json.get('text')), get_blocks(json.get('blocks')), get_attachments(json.get('attachments'))]
+    data = [
+        get_text(json.get('text')),
+        get_blocks(json.get('blocks')),
+        get_attachments(json.get('attachments'))
+    ]
     return '\n'.join([part.strip() for part in data if part])
-
-
-def get_text(txt: Optional[str]) -> str:
-    if not txt:
-        logger.info('No text found')
-        return ''
-
-    logger.info('Text found')
-    logger.debug(f'Text: {txt}')
-    return txt
-
-
-def get_blocks(blocks: Optional[List[dict]]) -> str:
-    if not blocks:
-        logger.info('No blocks found')
-        return ''
-
-    logger.info('Processing blocks.')
-    logger.debug(f'Blocks: {blocks}')
-
-    texts = [block['text']['text'] for block in blocks if block.get('type') == 'section']
-    return '\n'.join(texts)
-
-
-def get_attachments(attachments: Optional[List[dict]]) -> str:
-    if not attachments:
-        logger.info('No attachments found')
-        return ''
-
-    logger.info('Attachments found')
-    logger.debug(f'Attachments: {attachments}')
-
-    data = "\n".join([get_attachment(attachment) for attachment in attachments])
-    return data
-
-
-def get_attachment(attachment: dict) -> str:
-    data = f'{get_author(attachment)}\n{get_fields(attachment.get("fields"))}'
-
-    color = attachment.get('color')
-    if color == 'good':
-        data = '🟢 ' + data.replace('\n', '\n🟢 ')
-    elif color == 'danger':
-        data = '🔴 ' + data.replace('\n', '\n🔴 ')
-    return data
-
-
-def get_author(attachments: dict) -> str:
-    author = attachments.get('author')
-    link = attachments.get('author_link')
-    if not author:
-        return ''
-
-    return f'[{author}]({link}) says:' if link else f'*{author}* says:'
-
-
-def get_fields(fields: Optional[List[dict]]) -> str:
-    if not fields:
-        logger.info('No fields found')
-        return ''
-
-    logger.info('Fields found')
-    logger.debug(f'Fields: {fields}')
-
-    data = [f'_{field["title"]}:_' + (' ' if field.get('short') else '\n') + field['value'] for field in fields]
-    return '\n'.join(data)
-
-
-def process_links(text: str) -> str:
-    def create_link(matchobj) -> str:
-        match = matchobj.group(1)
-        try:
-            url, link = match.split('|')
-            return f'[{link}]({url})'
-        except Exception:
-            logger.warning('It was not possible to split text in URL for link, ignoring.')
-            return f' {match} '
-
-    return re.sub('<(.+?)>', create_link, text)
-
-
-def process_emojis(text: str) -> str:
-    return emoji.emojize(text, use_aliases=True)
-
-
-def transform_formatting(text: str) -> str:
-    def bold_fix(matchobj):
-        match = matchobj.group(1)
-        return f'**{match}**'
-
-    def italic_fix(matchobj):
-        match = matchobj.group(1)
-        return f'*{match}*'
-
-    bold_fixed = re.sub(r'\*(.+?)\*', bold_fix, text)
-    italic_fixed = re.sub(r'_(.+?)_', italic_fix, bold_fixed)
-    return italic_fixed
