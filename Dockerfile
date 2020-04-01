@@ -26,6 +26,4 @@ RUN echo $release_version > $RELEASE_FILE_PATH
 
 # start app
 EXPOSE 8080
-ENV FLAS_APP=app
-ENV FLAS_ENV=production
-CMD flask run --port=8080 --host=0.0.0.0
+CMD gunicorn --bind 0.0.0.0:8080 app:app
