@@ -10,7 +10,7 @@ COPY Pipfile* /
 RUN pipenv lock -r > requirements.txt
 RUN pip install -r requirements.txt
 
-# ----------------------Final image--------------------------------
+# ----------------------Final image-------------------
 FROM python:3.7-alpine AS image
 # copy dependencies
 COPY --from=install /usr/local /usr/local
