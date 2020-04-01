@@ -42,12 +42,16 @@ def build_configuration() -> Config:
     """
     Builds configuration from environment or from the Flask properties
     """
-    return Config(roman_url=get_prop('ROMAN_URL'),
+    return Config(roman_url=sanitize_url(get_prop('ROMAN_URL')),
                   redis_url=get_prop('REDIS_URL'),
                   redis_port=int(get_prop('REDIS_PORT')),
                   redis_username=get_prop('REDIS_USERNAME', True),
                   redis_password=get_prop('REDIS_PASSWORD', True),
-                  charon_url=get_prop('CHARON_URL'))
+                  charon_url=sanitize_url(get_prop('CHARON_URL')))
+
+
+def sanitize_url(url: str) -> str:
+    return url[0:-1] if url[-1] == '/' else url
 
 
 def get_prop(name: str, optional: bool = False) -> str:
