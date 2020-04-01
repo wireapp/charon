@@ -98,7 +98,6 @@ class RegisterHookOnlyBot(Resource):
         try:
             logger.info(json)
 
-            # TODO as we have Roman's token, verify its validity
             token = json['authentication_code']
             bot_api_key = json.get('bot_api_key')
 

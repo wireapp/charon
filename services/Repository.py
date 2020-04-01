@@ -1,6 +1,6 @@
 import logging
 from dataclasses import asdict
-from typing import Optional
+from typing import Optional, Tuple
 
 from dacite import from_dict
 
@@ -17,7 +17,7 @@ def register_bot(authentication_code: str, bot: Bot):
     get_db().hmset(f'registration.{authentication_code}', asdict(bot))
 
 
-def get_bot(authentication_code: str) -> Bot:
+def get_bot(authentication_code: str) -> Tuple[Bot, Optional[TwoWayBot]]:
     """
     Retrieves bot by auth code.
     """
@@ -25,16 +25,17 @@ def get_bot(authentication_code: str) -> Bot:
     logger.debug(f'Retrieving: {data}')
     # find out whether this bot has URL, if so it is TwoWayBot
     if data and data.get('bot_url'):
-        return from_dict(data_class=TwoWayBot, data=data)
+        two_way = from_dict(data_class=TwoWayBot, data=data)
+        return two_way, two_way
 
-    return from_dict(data_class=Bot, data=data)
+    return from_dict(data_class=Bot, data=data), None
 
 
 def register_conversation(authentication_code: str, bot_id: str, roman_token: str):
     """
     Register new conversation for the authentication_code.
     """
-    bot = get_bot(authentication_code)
+    bot, _ = get_bot(authentication_code)
     payload = BotsConversation(bot_api_key=bot.bot_api_key, roman_token=roman_token)
     data = asdict(payload)
     logger.debug(f'Saving: {data}')
