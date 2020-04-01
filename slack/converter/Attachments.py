@@ -24,12 +24,14 @@ def get_attachment(attachment: dict) -> str:
     Process single attachment.
     """
     data = get_author(attachment) + get_fields(attachment.get("fields"))
-
+    # box data
+    data = '┃\n' + data.replace('\n', '\n┃ ')
+    # choose color
     color = get_color(attachment.get('color'))
     if not color:
-        color = '--'
-
-    return f'{color}--\n{data}\n{color}--'
+        color = '▁'
+    # prepend and append color
+    return f'{color}▁▁\n{data}\n▁▁▁'
 
 
 def get_color(color: Optional[str]) -> str:
@@ -44,12 +46,12 @@ def get_color(color: Optional[str]) -> str:
     return clr
 
 
-def get_author(attachments: dict) -> str:
+def get_author(attachment: dict) -> str:
     """
     Obtains author of the post.
     """
-    author = attachments.get('author')
-    link = attachments.get('author_link')
+    author = attachment.get('author')
+    link = attachment.get('author_link')
     if not author:
         return ''
 
