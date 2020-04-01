@@ -23,7 +23,10 @@ kube-describe:
 kube-del:
 	kubectl delete pod -l name=charon -n staging
 
-kube-deploy: kube-del kube-describe kube-logs
+__sleep:
+	sleep 20
+
+kube-deploy: kube-del __sleep kube-describe kube-logs
 
 # Kubernets - prod
 kube-prod-logs:
