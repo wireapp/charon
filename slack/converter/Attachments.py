@@ -23,13 +23,13 @@ def get_attachment(attachment: dict) -> str:
     """
     Process single attachment.
     """
-    data = f'{get_author(attachment)}\n{get_fields(attachment.get("fields"))}'
+    data = get_author(attachment) + get_fields(attachment.get("fields"))
 
     color = get_color(attachment.get('color'))
-    if color:
-        data = f'{color} ' + data.replace('\n', f'\n{color} ')
+    if not color:
+        color = '--'
 
-    return data
+    return f'{color}--\n{data}\n{color}--'
 
 
 def get_color(color: Optional[str]) -> str:
@@ -38,9 +38,9 @@ def get_color(color: Optional[str]) -> str:
     """
     clr = ''
     if color == 'good':
-        clr = '🟢'
+        clr = '🟩'
     elif color == 'danger':
-        clr = '🔴'
+        clr = '🟥'
     return clr
 
 
@@ -53,7 +53,7 @@ def get_author(attachments: dict) -> str:
     if not author:
         return ''
 
-    return f'[{author}]({link}) says:' if link else f'*{author}* says:'
+    return f'[{author}]({link}) says:' if link else f'*{author}* says:' + '\n'
 
 
 def get_fields(fields: Optional[List[dict]]) -> str:
