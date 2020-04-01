@@ -12,3 +12,22 @@ db:
 
 up:
 	docker-compose up
+
+# Kubernets - staging
+kube-logs:
+	kubectl logs -f -l name=charon -n staging
+
+kube-describe:
+	kubectl describe pods -l name=charon -n staging
+
+kube-del:
+	kubectl delete pod -l name=charon -n staging
+
+kube-deploy: kube-del kube-describe kube-logs
+
+# Kubernets - prod
+kube-prod-logs:
+	kubectl logs -f -l name=charon -n prod
+
+kube-prod-describe:
+	kubectl describe pods -l name=charon -n prod
