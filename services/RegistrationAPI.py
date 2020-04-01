@@ -52,7 +52,7 @@ class RegisterHookOnlyBot(Resource):
     bot_registration = registration_api.model('WebHookOnlyBot', {
         'bot_api_key': fields.String(required=False,
                                      description='Slack Bot\'s API key used for accessing Slack and Charon. '
-                                                 'In case that this bot uses webhook only API, it can be empty.'),
+                                                 'If this value is empty, random API key is generated.'),
         'authentication_code': fields.String(required=True,
                                              description='Authentication code used by Roman to verify it\'s requests.'),
     })
