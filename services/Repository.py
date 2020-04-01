@@ -42,6 +42,15 @@ def register_conversation(authentication_code: str, bot_id: str, roman_token: st
     get_db().hmset(f'conversation.{bot_id}', data)
 
 
+def delete_conversation(bot_id: str):
+    """
+    Deletes conversation.
+    """
+    logger.debug(f'Deleting: {bot_id}')
+    count = get_db().delete(f'conversation.{bot_id}')
+    logger.info(f'{count} conversation(s) deleted')
+
+
 def get_conversation(bot_id: str) -> BotsConversation:
     """
     Retrieves conversation by bot id.

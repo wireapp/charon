@@ -6,7 +6,7 @@ from common.SlackBot import TwoWayBot
 from roman.RomanClient import RomanClient
 from roman.converter.NewConversation import convert_conversation
 from roman.converter.NewMessage import convert_message
-from services.Repository import get_bot, register_conversation
+from services.Repository import get_bot, register_conversation, delete_conversation
 from slack.SlackBotClient import SlackBotClient
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,8 @@ def handle(json: dict, roman_token: str):
         {
             'conversation.bot_request': bot_request,
             'conversation.init': init,
-            'conversation.new_text': new_text
+            'conversation.new_text': new_text,
+            'conversation.bot_removed': bot_removed
         }[message_type](json, roman_token)
     except KeyError:
         # type is different
@@ -30,6 +31,11 @@ def handle(json: dict, roman_token: str):
     except Exception as ex:
         logger.exception(f'Exception occurred during processing the message.')
         logger.debug(f'Exception details: {ex}')
+
+
+def bot_removed(json: dict, _: str):
+    logger.info('Delete request received.')
+    delete_conversation(json['botId'])
 
 
 def bot_request(json: dict, roman_token: str):
