@@ -129,7 +129,9 @@ Currently build on top of:
 ## Releases
 See [releases page](https://github.com/wireapp/charon/releases) for more info.
 
-In `0.0.2` we added support for the blocks, emojis 
+* Since [0.1.0](https://github.com/wireapp/charon/tree/0.1.0) Charon supports [Slack Webhook API](https://github.com/wireapp/charon#webhook-api).
+* In [0.0.2](https://github.com/wireapp/charon/tree/0.0.2) we added support for the blocks, emojis 
 and run the official welcome slack bot from the [tutorial](https://github.com/slackapi/python-slackclient/tree/master/tutorial)
 through the proxy.
+
 ![alt text](resources/welcome_bot-wire.png "Working example of the proxy.")
