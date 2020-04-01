@@ -15,8 +15,8 @@ def get_attachments(attachments: Optional[List[dict]]) -> str:
     logger.info('Attachments found')
     logger.debug(f'Attachments: {attachments}')
 
-    data = "\n".join([get_attachment(attachment) for attachment in attachments])
-    return data
+    data = '\n'.join([get_attachment(attachment) for attachment in attachments])
+    return data + '\n———'
 
 
 def get_attachment(attachment: dict) -> str:
@@ -24,14 +24,12 @@ def get_attachment(attachment: dict) -> str:
     Process single attachment.
     """
     data = get_author(attachment) + get_fields(attachment.get("fields"))
-    # box data
-    data = '┃ ' + data.replace('\n', '\n┃ ')
     # choose color
     color = get_color(attachment.get('color'))
     if not color:
         color = '—'
     # prepend and append color
-    return f'{color}——\n{data}\n———'
+    return f'{color}——\n{data}'
 
 
 def get_color(color: Optional[str]) -> str:
