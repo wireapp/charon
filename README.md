@@ -29,14 +29,14 @@ To add new Slack bot instance to Charon one must register the bot in the Roman a
 Both services have Swagger API for registration process or one can use CLI 
 from the [repository with example](https://github.com/LukasForst/slack-onboarding-bot/tree/master/cli). 
 
-Charon have support for Slack web hook API as well as event API,
-therefore the bot can either just post messages via web hook API or have complete access to communication 
+Charon have support for Slack webhook API as well as event API,
+therefore the bot can either just post messages via webhook API or have complete access to communication 
 with event API.
 
-### Web hook API
+### Webhook API
 One must register the bot in Roman and then on `/registration/hook` endpoint in the Charon.
-Due to Wire security limitations, web hook links are generated when the bot is added to the conversation.
-Therefore in order to get the web hook link, one must add the bot to the conversation, 
+Due to Wire security limitations, webhook links are generated when the bot is added to the conversation.
+Therefore in order to get the webhook link, one must add the bot to the conversation, 
 where should be the bot posting the messages. 
 After adding the bot to the conversation, you will receive generated link for that specific conversation.
 
@@ -46,6 +46,8 @@ curl -X POST http://charon.wire.com/slack/webhook/<api-key-per-bot>/<generated-c
     --header "content-type: application/json" \ 
     --data '{"text": "hello world"}'
 ```
+
+For registering new bot, one can use [CLI](https://github.com/wireapp/charon-webhook-cli).
 
 ## Example
 Example bot with complete CLI and description can be found [here](https://github.com/LukasForst/slack-onboarding-bot).
