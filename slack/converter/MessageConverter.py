@@ -80,7 +80,7 @@ def get_blocks(blocks: Optional[List[dict]]) -> str:
     return '\n'.join(texts)
 
 
-def get_attachments(attachments: Optional[dict]) -> str:
+def get_attachments(attachments: Optional[List[dict]]) -> str:
     if not attachments:
         logger.info('No attachments found')
         return ''
@@ -88,15 +88,18 @@ def get_attachments(attachments: Optional[dict]) -> str:
     logger.info('Attachments found')
     logger.debug(f'Attachments: {attachments}')
 
-    author = get_author(attachments)
-    data = author + "\n".join([get_fields(attachment.get('fields')) for attachment in attachments])
+    data = "\n".join([get_attachment(attachment) for attachment in attachments])
+    return data
 
-    color = attachments.get('color')
+
+def get_attachment(attachment: dict) -> str:
+    data = f'{get_author(attachment)}\n{get_fields(attachment.get("fields"))}'
+
+    color = attachment.get('color')
     if color == 'good':
         data = '🟢 ' + data.replace('\n', '\n🟢 ')
     elif color == 'danger':
         data = '🔴 ' + data.replace('\n', '\n🔴 ')
-
     return data
 
 
