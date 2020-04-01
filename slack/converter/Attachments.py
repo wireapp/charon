@@ -25,7 +25,7 @@ def get_attachment(attachment: dict) -> str:
     """
     data = get_author(attachment) + get_fields(attachment.get("fields"))
     # box data
-    data = '┃\n' + data.replace('\n', '\n┃ ')
+    data = '┃' + data.replace('\n', '\n┃ ')
     # choose color
     color = get_color(attachment.get('color'))
     if not color:
