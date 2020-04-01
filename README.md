@@ -90,13 +90,16 @@ Known limitations so far:
 There are, for sure, more limitation then those listed here, but we haven't found out yet.
 
 ## Running Charon
-Charon needs following configuration - `ROMAN_URL`, `REDIS_URL`, `REDIS_PORT` and `CHARON_URL`.
+Charon needs following configuration - `ROMAN_URL`, `REDIS_URL`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+ and `CHARON_URL`.
 To run Charon locally, please create file `config.py` which contains following runtime variables:
 ```python
 ROMAN_URL = 'http://proxy.services.zinfra.io'
 
 REDIS_URL = 'localhost'
 REDIS_PORT = '6379'
+REDIS_USERNAME = ''
+REDIS_PASSWORD = ''
 
 CHARON_URL = 'http://localhost:8080'
 ```

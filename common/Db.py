@@ -15,4 +15,10 @@ def get_db() -> Redis:
 
 
 def connect_db(config: Config) -> Redis:
-    return redis.Redis(host=config.redis_url, port=config.redis_port, charset="utf-8", decode_responses=True)
+    return redis.Redis(
+        host=config.redis_url,
+        port=config.redis_port,
+        username=config.redis_username,
+        password=config.redis_password,
+        charset="utf-8",
+        decode_responses=True)
