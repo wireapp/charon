@@ -25,13 +25,13 @@ def get_attachment(attachment: dict) -> str:
     """
     data = get_author(attachment) + get_fields(attachment.get("fields"))
     # box data
-    data = '┃' + data.replace('\n', '\n┃ ')
+    data = '┃ ' + data.replace('\n', '\n┃ ')
     # choose color
     color = get_color(attachment.get('color'))
     if not color:
-        color = '▁'
+        color = '—'
     # prepend and append color
-    return f'{color}▁▁\n{data}\n▁▁▁'
+    return f'{color}——\n{data}\n———'
 
 
 def get_color(color: Optional[str]) -> str:
@@ -40,9 +40,9 @@ def get_color(color: Optional[str]) -> str:
     """
     clr = ''
     if color == 'good':
-        clr = '🟩'
+        clr = '🟢'
     elif color == 'danger':
-        clr = '🟥'
+        clr = '🚨'
     return clr
 
 
