@@ -2,29 +2,27 @@
 FROM python:3.7-alpine AS install
 # install pipenv
 RUN pip install pipenv
-# create application folder
-RUN mkdir /app
-WORKDIR /app
 
 # copy dependencies
-COPY Pipfile* /app/
+COPY Pipfile* /
 
 # install dependencies
 RUN pipenv lock -r > requirements.txt
 RUN pip install -r requirements.txt
 
 # ----------------------Final image--------------------------------
-FROM install AS image
+FROM python:3.7-alpine AS image
 # copy dependencies
 COPY --from=install /usr/local /usr/local
+
+# copy app
+COPY . /app/
+WORKDIR /app
 
 # create version file
 ARG release_version=development
 ENV RELEASE_FILE_PATH=/app/release.txt
-RUN echo $release_version > /app/release.txt
-
-# copy app
-COPY . /app/
+RUN echo $release_version > $RELEASE_FILE_PATH
 
 # start app
 EXPOSE 8080
