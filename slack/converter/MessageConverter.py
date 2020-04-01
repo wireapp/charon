@@ -23,6 +23,7 @@ def convert_slack_message(json: dict) -> dict:
     """
     Convert slack message to Roman message.
     """
+    logger.debug(f'Parsing message:\n{json}')
     return {
         'type': 'text',
         'text': build_wire_text(json)
@@ -87,7 +88,25 @@ def get_attachments(attachments: Optional[dict]) -> str:
     logger.info('Attachments found')
     logger.debug(f'Attachments: {attachments}')
 
-    return "\n".join([get_fields(attachment.get('fields')) for attachment in attachments])
+    author = get_author(attachments)
+    data = author + "\n".join([get_fields(attachment.get('fields')) for attachment in attachments])
+
+    color = attachments.get('color')
+    if color == 'good':
+        data = '🟢 ' + data.replace('\n', '\n🟢 ')
+    elif color == 'danger':
+        data = '🔴 ' + data.replace('\n', '\n🔴 ')
+
+    return data
+
+
+def get_author(attachments: dict) -> str:
+    author = attachments.get('author')
+    link = attachments.get('author_link')
+    if not author:
+        return ''
+
+    return f'[{author}]({link}) says:' if link else f'*{author}* says:'
 
 
 def get_fields(fields: Optional[List[dict]]) -> str:
