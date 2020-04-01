@@ -61,14 +61,13 @@ class Webhooks(Resource):
         }
     )
     def post(self, api_key, bot_id):
-        logger.info(api_key)
-        logger.info(bot_id)
-        logger.info('New message from bot received.')
+        logger.info('New message from web hook bot received.')
+        logger.debug(f'API key: {api_key}, bot id: {bot_id}')
 
         json = request.get_json()
-
         conversation = get_conversation_checked(bot_id=bot_id, used_api_key=api_key)
         if not conversation:
+            logger.warning(f'No conversation found for bot {bot_id}.')
             return auth_denied()
 
         logger.info('Request authorized, handling message.')
