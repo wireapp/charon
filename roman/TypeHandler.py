@@ -1,4 +1,5 @@
 import logging
+import threading
 
 from common.Config import get_config, Config
 from common.SlackBot import TwoWayBot
@@ -37,27 +38,28 @@ def bot_request(json: dict, roman_token: str):
     logging.info(f'Bot request for bot id: {bot_id}')
 
     register_conversation(authentication_code=roman_token, bot_id=bot_id, roman_token=json['token'])
-    logger.info(f'New conversation: {json["conversationId"]} for bot {bot_id} ')
+    logger.info(f'New conversation: {json["conversationId"]} for bot {bot_id}')
 
 
 def init(json: dict, roman_token: str):
     logging.info('Init received, converting it to slack call.')
 
     bot, two_way = get_bot(roman_token)
+    config = get_config()
 
     if not two_way:
         logger.info('Conversation registered for webhook only bot.')
 
-        config = get_config()
         url = f'{config.charon_url}/slack/webhook/{bot.bot_api_key}/{json["botId"]}'
         logger.debug(f'URL generated - {url}')
 
         RomanClient(config).send_text_message(json['token'], f'Webhook generated: `{url}`')
         return
 
-    config = get_config()
+    threading.Thread(target=init_response, args=(json, config, two_way,))
 
-    # TODO consider executing this inside thread pool
+
+def init_response(json: dict, config: Config, two_way: TwoWayBot):
     conversation = get_conversation_info(config, json['token'])
     converted = convert_conversation(two_way, roman_payload=json, conversation=conversation)
 
@@ -71,12 +73,15 @@ def new_text(json: dict, roman_token: str):
 
     bot, two_way = get_bot(roman_token)
     if not two_way:
-        logger.info('Init for webhook only bot, skipping.')
+        logger.info('This is webhook bot only, ignoring message.')
         return
 
     config = get_config()
 
-    # TODO consider executing this inside thread pool
+    threading.Thread(target=new_text_response, args=(json, config, two_way,))
+
+
+def new_text_response(json: dict, config: Config, two_way: TwoWayBot):
     conversation = get_conversation_info(config, json['token'])
     converted = convert_message(two_way, roman_payload=json, conversation=conversation)
 

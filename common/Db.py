@@ -1,4 +1,5 @@
 import redis
+from flask import current_app as app, g
 from redis import Redis
 
 from common.Config import Config, get_config
@@ -12,6 +13,13 @@ def get_db() -> Redis:
     """
     config = get_config()
     return get_or_set('db', lambda: connect_db(config))
+
+
+@app.teardown_appcontext
+def teardown_db():
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
 
 
 def connect_db(config: Config) -> Redis:
