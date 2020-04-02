@@ -36,7 +36,8 @@ def read_version(default: str) -> str:
     """
     file_path = os.environ.get('RELEASE_FILE_PATH')
     file_path = file_path if file_path else app.config.get('RELEASE_FILE_PATH')
-    logger.info(f'File path: {file_path}')
+    logger.debug(f'File path: {file_path}')
+
     version = None
     if file_path:
         with open(file_path, 'r') as file:

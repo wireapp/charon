@@ -11,6 +11,11 @@ from services.StatusApi import status_api
 from services.VersionApi import version_api
 from slack.SlackAPI import slack_api
 
+# Setup logging
+logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] - %(levelname)s - %(module)s: %(message)s',
+                    stream=sys.stdout)
+logger = logging.getLogger(__name__)
+
 # Create app
 app = Flask(__name__)
 
@@ -37,11 +42,6 @@ api.add_namespace(status_api, path='/')
 config_file = 'config'
 if importing.find_spec(config_file):
     app.config.from_object(config_file)
-
-# Setup logging
-logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] - %(levelname)s - %(module)s: %(message)s',
-                    stream=sys.stdout)
-logger = logging.getLogger(__name__)
 
 # App startup
 if __name__ == '__main__':

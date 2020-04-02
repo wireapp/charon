@@ -1,8 +1,12 @@
+import logging
+
 import redis
 from redis import Redis
 
 from common.Config import Config, get_config
 from common.Utils import get_or_set
+
+logger = logging.getLogger(__name__)
 
 
 def get_db() -> Redis:
@@ -15,6 +19,7 @@ def get_db() -> Redis:
 
 
 def connect_db(config: Config) -> Redis:
+    logger.debug(f'Connecting to the DB.')
     return redis.Redis(
         host=config.redis_url,
         port=config.redis_port,

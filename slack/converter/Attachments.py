@@ -9,10 +9,8 @@ def get_attachments(attachments: Optional[List[dict]]) -> str:
     Process attachments.
     """
     if not attachments:
-        logger.info('No attachments found')
         return ''
 
-    logger.info('Attachments found')
     logger.debug(f'Attachments: {attachments}')
 
     data = '\n'.join([get_attachment(attachment) for attachment in attachments])
@@ -52,8 +50,9 @@ def get_author(attachment: dict) -> str:
     link = attachment.get('author_link')
     if not author:
         return ''
-    logger.info('Author found')
+
     logger.debug(f'Author: {author}')
+
     return (f'[{author}]({link}) says:' if link else f'*{author}* says:') + '\n'
 
 
@@ -62,10 +61,8 @@ def get_fields(fields: Optional[List[dict]]) -> str:
     Fields of the attachment.
     """
     if not fields:
-        logger.info('No fields found')
         return ''
 
-    logger.info('Fields found')
     logger.debug(f'Fields: {fields}')
 
     data = [f'_{field["title"]}:_' + (' ' if field.get('short') else '\n') + field['value'] for field in fields]

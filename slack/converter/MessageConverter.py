@@ -22,16 +22,16 @@ def build_wire_text(json: dict) -> dict:
     """
     Process text part of the message.
     """
-    logger.info('Parsing text from bot message')
+    logger.debug('Parsing text from bot message')
     text = parse_text(json)
 
-    logger.info('Converting links to markdown')
+    logger.debug('Converting links to markdown')
     text = process_links(text)
 
-    logger.info('Creating emojis')
+    logger.debug('Creating emojis')
     text = process_emojis(text)
 
-    logger.info('Reformatting text')
+    logger.debug('Reformatting text')
     text = transform_formatting(text)
     return {
         'data': text

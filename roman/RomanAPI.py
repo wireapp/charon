@@ -22,16 +22,17 @@ class MessagesApi(Resource):
         body=dummy_model
     )
     def post(self):
-        logger.info('Incoming message')
+        logger.info('Incoming message from Roman')
 
         json = request.get_json()
 
         try:
-            logger.info(f'Obtaining bearer')
+            logger.debug(f'Obtaining bearer')
             bearer_token = request.headers['Authorization'].split("Bearer ", 1)[1]
             logger.debug('Bearer exist')
         except KeyError:
-            logger.warning(f'Bearer token could not be obtained')
+            logger.warning(f'Bearer token could not be obtained.')
+            logger.debug(f'Exception during request: header: {request.headers} payload: {json}')
             return auth_denied()
 
         handle(json, bearer_token)

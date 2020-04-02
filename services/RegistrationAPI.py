@@ -35,15 +35,17 @@ class RegisterBot(Resource):
 
         json = request.get_json()
         try:
-            logger.debug(json)
-            bot = from_dict(data_class=TwoWayBot, data=json)
+            logger.debug(f'Bot registration request: {json}')
             token = json['authentication_code']
+            bot = from_dict(data_class=TwoWayBot, data=json)
         except Exception:
-            logger.exception('Unexpected or missing data.')
+            logger.exception(f'Unexpected or missing data. Request: {json}')
             return Response('Unexpected or missing data.', 400)
 
         register_bot(token, bot)
-        logger.info(f'Bot with id {bot.bot_api_key} registered.')
+
+        logger.info('Bot registered.')
+        logger.debug(f'Bot\'s api key {bot.bot_api_key}.')
         return jsonify({'success': True})
 
 
@@ -62,11 +64,11 @@ class RegisterHookOnlyBot(Resource):
         validate=True
     )
     def post(self):
-        logger.info('Registering new bot.')
+        logger.info('Registering new webhook only bot.')
 
         json = request.get_json()
         try:
-            logger.info(json)
+            logger.debug(f'Webhook bot registration request: {json}')
 
             token = json['authentication_code']
             bot_api_key = json.get('bot_api_key')

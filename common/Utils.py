@@ -25,4 +25,4 @@ def auth_denied() -> Response:
     """
     Builds 401 response.
     """
-    return Response('Access denied, wrong or missing token.', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
+    return Response('Access denied, wrong or missing token.', 401)

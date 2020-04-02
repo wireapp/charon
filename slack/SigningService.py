@@ -10,7 +10,9 @@ class SigningService:
         self.secret = secret
 
     def generate_signature(self, timestamp: int, payload: bytes) -> str:
-        logger.info('Signing payload.')
+        logger.debug('Signing payload.')
 
         req = f'v0:{str(timestamp)}:'.encode('utf-8') + payload
-        return 'v0=' + hmac.new(self.secret.encode('utf-8'), req, hashlib.sha256).hexdigest()
+        signature = 'v0=' + hmac.new(self.secret.encode('utf-8'), req, hashlib.sha256).hexdigest()
+        logger.debug(f'Signature {signature}')
+        return signature

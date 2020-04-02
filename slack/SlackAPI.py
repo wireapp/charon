@@ -34,6 +34,7 @@ class Messages(Resource):
             bearer_token = request.headers['Authorization'].split("Bearer ", 1)[1]
             conversation = get_conversation_checked(bot_id=bot_id, used_api_key=bearer_token)
             if not conversation:
+                logger.warning('')
                 return auth_denied()
         except Exception:
             logger.exception('Exception during auth.')

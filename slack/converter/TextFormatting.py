@@ -17,7 +17,7 @@ def process_links(text: str) -> str:
             url, link = match.split('|')
             return f'[{link}]({url})'
         except Exception:
-            logger.warning('It was not possible to split text in URL for link, ignoring.')
+            logger.warning(f'It was not possible to split text "{match}" in URL for link, ignoring.')
             return f' {match} '
 
     return re.sub('<(.+?)>', create_link, text)

@@ -14,11 +14,11 @@ def handle(conversation: BotsConversation, json: dict):
     """
     msg = convert_slack_message(json)
     config = get_config()
+
     # TODO consider sending this in the thread pool
     send_msg(msg, conversation.roman_token, config)
 
 
 def send_msg(msg: dict, token: str, config: Config):
-    logger.info(f'Sending message: {msg}')
     response = RomanClient(config).send_message(token, msg)
-    logger.info(f'Response: {response}')
+    logger.debug(f'Response: {response}')

@@ -1,43 +1,3 @@
-# {
-#    "token":"<token>",
-#    "team_id":"TVBTG5W22",
-#    "api_app_id":"AUY7PSRNF",
-#    "event":{
-#       "client_msg_id":"14982582-8963-4be1-a11e-6fcf529b1944",
-#       "type":"message",
-#       "text":"hello",
-#       "user":"UUZJW38UR",
-#       "ts":"1584118619.001100",
-#       "team":"TVBTG5W22",
-#       "blocks":[
-#          {
-#             "type":"rich_text",
-#             "block_id":"xGIxC",
-#             "elements":[
-#                {
-#                   "type":"rich_text_section",
-#                   "elements":[
-#                      {
-#                         "type":"text",
-#                         "text":"hello"
-#                      }
-#                   ]
-#                }
-#             ]
-#          }
-#       ],
-#       "channel":"GV04GUC82",
-#       "event_ts":"1584118619.001100",
-#       "channel_type":"group"
-#    },
-#    "type":"event_callback",
-#    "event_id":"EvV1M76DNF",
-#    "event_time":1584118619,
-#    "authed_users":[
-#       "UUWTRSDJ6"
-#    ]
-# }
-
 import logging
 
 from common.SlackBot import TwoWayBot
@@ -53,7 +13,7 @@ def convert_message(bot: TwoWayBot, roman_payload: dict, conversation: dict) -> 
 
     timestamp = generate_timestamp()
 
-    logger.info('Converting message.')
+    logger.debug(f'Converting message: {roman_payload}')
     return {
         'token': bot.bot_token,
         'team_id': bot_id,  # TODO determine what is in our sense team id, lets assume this is only one team
@@ -67,7 +27,7 @@ def convert_message(bot: TwoWayBot, roman_payload: dict, conversation: dict) -> 
 
 
 def convert_event(bot_id: str, timestamp: int, roman_payload: dict):
-    logger.info('Converting event data.')
+    logger.debug('Converting event data.')
     return {
         'client_msg_id': roman_payload['userId'],
         'type': 'message',

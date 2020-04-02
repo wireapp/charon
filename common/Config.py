@@ -42,12 +42,15 @@ def build_configuration() -> Config:
     """
     Builds configuration from environment or from the Flask properties
     """
-    return Config(roman_url=sanitize_url(get_prop('ROMAN_URL')),
-                  redis_url=get_prop('REDIS_URL'),
-                  redis_port=int(get_prop('REDIS_PORT')),
-                  redis_username=get_prop('REDIS_USERNAME', True),
-                  redis_password=get_prop('REDIS_PASSWORD', True),
-                  charon_url=sanitize_url(get_prop('CHARON_URL')))
+    logger.debug('Building configuration.')
+    config = Config(roman_url=sanitize_url(get_prop('ROMAN_URL')),
+                    redis_url=get_prop('REDIS_URL'),
+                    redis_port=int(get_prop('REDIS_PORT')),
+                    redis_username=get_prop('REDIS_USERNAME', True),
+                    redis_password=get_prop('REDIS_PASSWORD', True),
+                    charon_url=sanitize_url(get_prop('CHARON_URL')))
+    logger.debug(f'Used configuration: {config}')
+    return config
 
 
 def sanitize_url(url: str) -> str:

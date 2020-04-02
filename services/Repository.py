@@ -22,7 +22,6 @@ def get_bot(authentication_code: str) -> Tuple[Bot, Optional[TwoWayBot]]:
     Retrieves bot by auth code.
     """
     data = get_db().hgetall(f'registration.{authentication_code}')
-    logger.debug(f'Retrieving: {data}')
     # find out whether this bot has URL, if so it is TwoWayBot
     if data and data.get('bot_url'):
         two_way = from_dict(data_class=TwoWayBot, data=data)
@@ -37,18 +36,16 @@ def register_conversation(authentication_code: str, bot_id: str, roman_token: st
     """
     bot, _ = get_bot(authentication_code)
     payload = BotsConversation(bot_api_key=bot.bot_api_key, roman_token=roman_token)
-    data = asdict(payload)
-    logger.debug(f'Saving: {data}')
-    get_db().hmset(f'conversation.{bot_id}', data)
+
+    get_db().hmset(f'conversation.{bot_id}', asdict(payload))
 
 
 def delete_conversation(bot_id: str):
     """
     Deletes conversation.
     """
-    logger.debug(f'Deleting: {bot_id}')
     count = get_db().delete(f'conversation.{bot_id}')
-    logger.info(f'{count} conversation(s) deleted')
+    logger.info(f'{count} conversation(s) deleted for bot {bot_id}.')
 
 
 def get_conversation(bot_id: str) -> BotsConversation:
@@ -68,8 +65,9 @@ def get_conversation_checked(bot_id: str, used_api_key: str) -> Optional[BotsCon
         conversation = get_conversation(bot_id)
         if conversation.bot_api_key == used_api_key:
             return conversation
+        else:
+            logger.warning(f'Bot {bot_id} used API key {used_api_key}, but different was expected.')
     except Exception:
-        logger.exception('It was not possible to verify the conversation.')
+        logger.warning(f'It was not possible to obtain conversation! Bot {bot_id} and api key {used_api_key}.')
 
-    logger.warning(f'Unverified access for bot {bot_id} and api key {used_api_key} ')
     return None
