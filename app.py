@@ -4,6 +4,7 @@ from importlib import util as importing
 
 from flask import Flask
 from flask_restx import Api
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from roman.RomanAPI import roman_api
 from services.RegistrationAPI import registration_api
@@ -18,6 +19,8 @@ logger = logging.getLogger(__name__)
 
 # Create app
 app = Flask(__name__)
+# fix for https swagger - see https://github.com/python-restx/flask-restx/issues/58
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_port=1, x_for=1, x_host=1, x_prefix=1)
 
 # Set up Swagger and API
 authorizations = {
