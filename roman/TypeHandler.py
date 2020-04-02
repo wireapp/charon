@@ -59,7 +59,7 @@ def init(json: dict, roman_token: str):
         RomanClient(config).send_text_message(json['token'], f'Webhook generated: `{url}`')
         return
 
-    threading.Thread(target=init_response, args=(json, config, two_way,))
+    threading.Thread(target=init_response, args=(json, config, two_way,)).start()
 
 
 def new_text(json: dict, roman_token: str):
@@ -71,4 +71,4 @@ def new_text(json: dict, roman_token: str):
         return
 
     config = get_config()
-    threading.Thread(target=new_text_response, args=(json, config, two_way,))
+    threading.Thread(target=new_text_response, args=(json, config, two_way,)).start()
