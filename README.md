@@ -36,7 +36,7 @@ However, Charon does not store content of conversations anywhere.
 The only data, that are stored, are access keys to Roman and to Slack bot.
 All database related operation can be found in [Repository](services/Repository.py).
 
-If the e2e encryption is necessary, on can either deploy Roman and Charon in one's infrastructure 
+If the e2e encryption is necessary, one can either deploy Roman and Charon to one's infrastructure 
 or to use directly [Lithium](https://github.com/wireapp/lithium).
 
 ## Slack bot onboarding
