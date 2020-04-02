@@ -12,7 +12,7 @@ from services.VersionApi import version_api
 from slack.SlackAPI import slack_api
 
 # Setup logging
-logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] - %(levelname)s - %(module)s: %(message)s',
+logging.basicConfig(level=logging.INFO, format='[%(asctime)s] - %(levelname)s - %(module)s: %(message)s',
                     stream=sys.stdout)
 logger = logging.getLogger(__name__)
 
