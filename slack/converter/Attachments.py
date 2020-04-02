@@ -67,5 +67,5 @@ def get_fields(fields: Optional[List[dict]]) -> str:
 
     logger.debug(f'Fields: {fields}')
 
-    data = [f'_{field["title"]}:_' + (' ' if field.get('short') else '\n') + field['value'] for field in fields]
+    data = [f'`{field["title"]}`' + (' ' if field.get('short') else '\n') + field['value'] for field in fields]
     return '\n'.join(data)
