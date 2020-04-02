@@ -7,6 +7,9 @@ logger = logging.getLogger(__name__)
 def get_text(txt: Optional[str]) -> str:
     """
     Process text of the message.
+
+    >>> get_text('text')
+    'text'
     """
     if not txt:
         return ''
@@ -18,6 +21,11 @@ def get_text(txt: Optional[str]) -> str:
 def get_blocks(blocks: Optional[List[dict]]) -> str:
     """
     Process blocks.
+
+    >>> get_blocks([{'type': 'section', 'text': {'text':'super-text'}}])
+    'super-text'
+    >>> get_blocks([{'type': 'section', 'text': {'text':'first'}}, {'type': 'section', 'text': {'text':'second'}}])
+    'first\\nsecond'
     """
     if not blocks:
         return ''

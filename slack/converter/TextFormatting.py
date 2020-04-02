@@ -9,6 +9,11 @@ logger = logging.getLogger(__name__)
 def process_links(text: str) -> str:
     """
     Converts Slack links to markdown links.
+
+    >>> process_links('something <link|name> else')
+    'something [name](link) else'
+    >>> process_links('something<not link>else')
+    'something not link else'
     """
 
     def create_link(matchobj) -> str:
@@ -33,6 +38,9 @@ def process_emojis(text: str) -> str:
 def transform_formatting(text: str) -> str:
     """
     Fixes bold and italic text.
+
+    >>> transform_formatting('_italic_ *bold* nothing')
+    '*italic* **bold** nothing'
     """
 
     def bold_fix(matchobj):

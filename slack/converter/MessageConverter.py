@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 def convert_slack_message(json: dict) -> dict:
     """
     Convert slack message to Roman message.
+
+    >>> convert_slack_message({'text': 'hello world'})
+    {'type': 'text', 'text': {'data': 'hello world'}}
     """
     logger.debug(f'Parsing message:\n{json}')
     return {
@@ -21,6 +24,12 @@ def convert_slack_message(json: dict) -> dict:
 def build_wire_text(json: dict) -> dict:
     """
     Process text part of the message.
+
+    >>> build_wire_text({'text': 'hello world'})
+    {'data': 'hello world'}
+
+    >>> build_wire_text({'text': '_hello_ *world* <link|name>'})
+    {'data': '*hello* **world** [name](link)'}
     """
     logger.debug('Parsing text from bot message')
     text = parse_text(json)
@@ -41,6 +50,12 @@ def build_wire_text(json: dict) -> dict:
 def parse_text(json: dict) -> str:
     """
     Formats text in the json payload.
+
+    >>> text = 'first-line'
+    >>> blocks = [{'type': 'section', 'text': {'text':'super-text'}}]
+    >>> attachments = [{'color': 'good', 'author_name': 'Lukas', 'fields': [{'title': 'title', 'value': 'value'}]}]
+    >>> parse_text({'text': text, 'blocks': blocks, 'attachments': attachments})
+    'first-line\\nsuper-text\\n🟢——\\n**Lukas:**\\n`title:`\\nvalue\\n———'
     """
     data = [
         get_text(json.get('text')),
