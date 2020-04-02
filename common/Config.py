@@ -53,12 +53,15 @@ def build_configuration() -> Config:
     return config
 
 
-def sanitize_url(url: str, protocol: str = 'https//') -> str:
+def sanitize_url(url: str, protocol: str = 'https://') -> str:
     """
     Takes URL, removes last / and prepends protocol.
+
+    >>> sanitize_url('charon.com/something/')
+    'https://charon.com/something'
     """
     sanitized = url[0:-1] if url[-1] == '/' else url
-    with_protocol = sanitized if sanitized.startswith('http') else f'{protocol}{url}'
+    with_protocol = sanitized if sanitized.startswith('http') else f'{protocol}{sanitized}'
     return with_protocol
 
 
