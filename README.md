@@ -24,6 +24,20 @@ the message is transformed (some information are missing in the default calls fr
  but when I was testing raw Slack Bot with Slack API, the response time was between 1.4 and 2.5 seconds.
  The setup with Charon and Roman had response times around 1.2 and 2.5 seconds, so no leg basically. 
 
+## Security & Privacy
+Please note that the requests from the bots and the bots **communication** through Charon & Roman
+is **not end-to-end encrypted**. 
+Whole idea of using Charon & Roman is to provide most simple way how to send data to the Wire environment
+and therefore all encryption is leveraged to the Roman.
+In other words, requests sent to the Charon are not encrypted, Charon sends them to Roman,
+ then Roman encrypts them (Roman uses [Lithium](https://github.com/wireapp/lithium)) and send them to Wire backend. 
+
+However, Charon does not store content of conversations anywhere.
+The only data, that are stored, are access keys to Roman and to Slack bot.
+All database related operation can be found in [Repository](services/Repository.py).
+
+If the e2e encryption is necessary, please use directly [Lithium](https://github.com/wireapp/lithium). 
+
 ## Slack bot onboarding
 To add new Slack bot instance to Charon one must register the bot in the Roman and in the Charon.
 Both services have Swagger API for registration process or one can use CLI 
