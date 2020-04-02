@@ -52,8 +52,9 @@ def get_author(attachment: dict) -> str:
     link = attachment.get('author_link')
     if not author:
         return ''
-
-    return f'[{author}]({link}) says:' if link else f'*{author}* says:' + '\n'
+    logger.info('Author found')
+    logger.debug(f'Author: {author}')
+    return (f'[{author}]({link}) says:' if link else f'*{author}* says:') + '\n'
 
 
 def get_fields(fields: Optional[List[dict]]) -> str:
