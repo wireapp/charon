@@ -39,6 +39,8 @@ def get_color(color: Optional[str]) -> str:
         clr = '🟢'
     elif color == 'danger':
         clr = '🚨'
+
+    logger.debug(f'Color: {clr}')
     return clr
 
 
@@ -46,14 +48,14 @@ def get_author(attachment: dict) -> str:
     """
     Obtains author of the post.
     """
-    author = attachment.get('author')
+    author = attachment.get('author_name')
     link = attachment.get('author_link')
     if not author:
         return ''
 
     logger.debug(f'Author: {author}')
 
-    return (f'[{author}]({link}) says:' if link else f'*{author}* says:') + '\n'
+    return (f'[{author}]({link}):' if link else f'**{author}:**') + '\n'
 
 
 def get_fields(fields: Optional[List[dict]]) -> str:
