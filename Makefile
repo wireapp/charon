@@ -23,7 +23,9 @@ kube-describe:
 kube-del:
 	kubectl delete pod -l name=charon -n staging
 
+# wait until is the image deployed
 __sleep:
+	echo 'Waiting for the image deployment.'; \
 	sleep 20
 
 kube-deploy: kube-del __sleep kube-describe kube-logs
