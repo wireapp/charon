@@ -53,8 +53,13 @@ def build_configuration() -> Config:
     return config
 
 
-def sanitize_url(url: str) -> str:
-    return url[0:-1] if url[-1] == '/' else url
+def sanitize_url(url: str, protocol: str = 'https//') -> str:
+    """
+    Takes URL, removes last / and prepends protocol.
+    """
+    sanitized = url[0:-1] if url[-1] == '/' else url
+    with_protocol = sanitized if sanitized.startswith('http') else f'{protocol}{url}'
+    return with_protocol
 
 
 def get_prop(name: str, optional: bool = False) -> str:
