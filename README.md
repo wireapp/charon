@@ -134,7 +134,13 @@ Tag `latest` is current master branch - each commit is build and tagged as `late
 [Releases](https://github.com/wireapp/charon/releases) have then images with corresponding tag.
 
 ## Development
-It uses `pipenv` for dependencies management. 
+Master branch is used as bleeding edge which is deployed as `latest` to staging environment.
+Stable releases are tagged and deployed to production.
+Significant or notable changes that would break current behavior are developed in separate branches
+and merged to master through the PR. 
+Squashing is not necessary.
+
+Charon uses `pipenv` for dependencies management. 
 Currently build on top of:
 - [Flask](https://github.com/pallets/flask) - development server and facade
 - [gunicorn](https://github.com/benoitc/gunicorn) - production server
