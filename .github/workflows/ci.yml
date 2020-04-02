@@ -1,7 +1,9 @@
 name: CI/CD
 
-on: [push, pull_request]
-
+on:
+  push:
+    branches:
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,3 +26,14 @@ jobs:
           tag_with_ref: true
           # push only if this is master
           push: ${{ startsWith(github.ref, 'refs/heads/master') }}
+
+      # Send webhook to Wire using Slack Bot
+      - name: Webhook to Wire
+        uses: 8398a7/action-slack@v2
+        with:
+          status: ${{ job.status }}
+          author_name: Charon CI pipeline
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_CI }}
+        # Send message only if previous step failed
+        if: failure()
