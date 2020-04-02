@@ -32,7 +32,8 @@ and therefore all encryption is leveraged to the Roman.
 In other words, requests sent to the Charon are not encrypted, Charon sends them to Roman,
  then Roman encrypts them (Roman uses [Lithium](https://github.com/wireapp/lithium)) and send them to Wire backend. 
 
-However, Charon does not store content of conversations anywhere.
+However, Charon does not store content of conversations in the database
+(but when debug log level is enabled, part of the messages can be printed to logs).
 The only data, that are stored, are access keys to Roman and to Slack bot.
 All database related operation can be found in [Repository](services/Repository.py).
 
