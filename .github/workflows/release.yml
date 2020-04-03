@@ -24,6 +24,8 @@ jobs:
           build_args: release_version=${{ env.RELEASE_VERSION }}
           # tag the image with latest git tag
           tag_with_ref: true
+          # add labels from the git
+          add_git_labels: true
           # push only if this is the build containing tags
           push: ${{ startsWith(github.ref, 'refs/tags/') }}
 
