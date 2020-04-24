@@ -96,6 +96,7 @@ jobs:
           path: rubicon
           branch: ${{ env.SERVICE_NAME }}-release
           token: ${{ secrets.RUBICON_GIT_TOKEN }}
+          labels: version-bump
           title: ${{ env.SERVICE_NAME }} release ${{ env.RELEASE_VERSION }}
           commit-message: ${{ env.SERVICE_NAME }} version bump to ${{ env.RELEASE_VERSION }}
           body: |
