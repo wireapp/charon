@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DOCKER_IMAGE: lukaswire/charon
+  DOCKER_IMAGE: wire-bot/charon
 
 jobs:
   publish:
@@ -22,10 +22,13 @@ jobs:
       - name: Build docker image, push
         uses: docker/build-push-action@v1
         with:
-          # login to repo
+          # set docker image
           repository: ${{ env.DOCKER_IMAGE }}
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          # use GCR repository
+          registry: eu.gcr.io
+          # see https://github.com/marketplace/actions/docker-build-push#google-container-registry-gcr
+          username: _json_key
+          password: ${{ secrets.GCR_ACCESS_JSON }}
           # pass release_version
           build_args: release_version=${{ env.RELEASE_VERSION }}
           # tag the image with name of the branch - latest as this is master
@@ -45,4 +48,3 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_CI }}
         # Send message only if previous step failed
         if: failure()
-

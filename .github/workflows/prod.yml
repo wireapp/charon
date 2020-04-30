@@ -5,7 +5,7 @@ on:
     types: published
 
 env:
-  DOCKER_IMAGE: lukaswire/charon
+  DOCKER_IMAGE: wire-bot/charon
   SERVICE_NAME: charon
 
 jobs:
@@ -22,10 +22,13 @@ jobs:
       - name: Build and publish docker image
         uses: docker/build-push-action@v1
         with:
-          # login to repo
+          # set docker image
           repository: ${{ env.DOCKER_IMAGE }}
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          # use GCR repository
+          registry: eu.gcr.io
+          # see https://github.com/marketplace/actions/docker-build-push#google-container-registry-gcr
+          username: _json_key
+          password: ${{ secrets.GCR_ACCESS_JSON }}
           # pass release_version
           build_args: release_version=${{ env.RELEASE_VERSION }}
           # tag the image with latest git tag
@@ -52,11 +55,11 @@ jobs:
           IMAGE: ${{ env.DOCKER_IMAGE }}
           SERVICE: ${{ env.SERVICE_NAME }}
           VERSION: ${{ env.RELEASE_VERSION }}
-        run: |-
+        run: |
           # go to directory with configuration
           cd "rubicon/prod/services/$SERVICE"
-          # escape literals for the sed
-          export SED_PREPARED=$(echo $IMAGE  | awk '{ gsub("/", "\\/", $1); print $1 }')
+          # escape literals for the sed and set output with GCR
+          export SED_PREPARED=$(echo $IMAGE  | awk '{ gsub("/", "\\/", $1); print "eu.gcr.io\\/"$1 }')
           # update final yaml
           sed -i".bak" "s/image: $SED_PREPARED.*/image: $SED_PREPARED:$VERSION/g" "$SERVICE.yaml"
           # delete bakup file
@@ -67,26 +70,28 @@ jobs:
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '286.0.0'
-          service_account_email: ${{ secrets.GKE_SA_EMAIL }}
+          service_account_email: kubernetes-deployment-agent@wire-bot.iam.gserviceaccount.com
           service_account_key: ${{ secrets.GKE_SA_KEY }}
-          project_id: ${{ secrets.GKE_PROJECT }}
+          project_id: wire-bot
 
       # Configure Docker to use the gcloud command-line tool
       - name: Configure Docker Google cloud
-        run: |-
+        run: |
           gcloud --quiet auth configure-docker
 
       # Get the GKE credentials so we can deploy to the cluster
       - name: Obtain k8s credentials
         env:
-          GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
-          GKE_ZONE: ${{ secrets.GKE_ZONE }}
-        run: |-
+          GKE_CLUSTER: anayotto
+          GKE_ZONE: europe-west1-c
+        run: |
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 
       # K8s is set up, deploy the app
       - name: Deploy the Service
-        run: |-
+        env:
+          SERVICE: ${{ env.SERVICE_NAME }}
+        run: |
           kubectl apply -f "rubicon/prod/services/$SERVICE/$SERVICE.yaml"
 
       # Commit all data to Rubicon and open PR
@@ -96,7 +101,7 @@ jobs:
           path: rubicon
           branch: ${{ env.SERVICE_NAME }}-release
           token: ${{ secrets.RUBICON_GIT_TOKEN }}
-          labels: version-bump
+          labels: version-bump, automerge
           title: ${{ env.SERVICE_NAME }} release ${{ env.RELEASE_VERSION }}
           commit-message: ${{ env.SERVICE_NAME }} version bump to ${{ env.RELEASE_VERSION }}
           body: |
