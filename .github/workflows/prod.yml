@@ -107,6 +107,14 @@ jobs:
           body: |
             This is automatic version bump from the pipeline.
 
+      # Wait on charon startup to send the notification
+      - name: Wait on Charon startup
+        run: |
+          echo "Waiting on Charon"
+          sleep 60
+          echo "Timeout reached. Sending webhook."
+
+
       # Send webhook to Wire using Slack Bot
       - name: Webhook to Wire
         uses: 8398a7/action-slack@v2
