@@ -31,8 +31,10 @@ def process_links(text: str) -> str:
 def process_emojis(text: str) -> str:
     """
     Converts written emojis to the UTF emojis.
+    >>> process_emojis('Hello :red_heart:')
+    'Hello ❤️'
     """
-    return emoji.emojize(text, use_aliases=True)
+    return emoji.emojize(text, language='alias')
 
 
 def transform_formatting(text: str) -> str:
