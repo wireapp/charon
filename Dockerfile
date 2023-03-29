@@ -1,5 +1,5 @@
 # ----------- download python dependencies -----------
-FROM python:3.7-alpine AS install
+FROM python:3.11-alpine AS install
 # install pipenv
 RUN pip install pipenv
 
@@ -11,7 +11,7 @@ RUN pipenv requirements > requirements.txt
 RUN pip install -r requirements.txt
 
 # ----------------------Final image-------------------
-FROM python:3.7-alpine AS image
+FROM python:3.11-alpine AS image
 # copy dependencies
 COPY --from=install /usr/local /usr/local
 
