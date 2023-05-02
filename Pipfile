@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-flask = "==2.2.3"
+flask = "==2.2.5"
 werkzeug = "==2.2.3"
 flask-restx = "==1.1.0"
 requests = "==2.28.2"
